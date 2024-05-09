@@ -14,6 +14,7 @@ export enum IntentEnum {
 @ccclass('Intents')
 export class Intents extends Component {
     public PlayerIntent: EventTarget = new EventTarget();
+
     onLoad(): void {
         input.on(Input.EventType.KEY_DOWN, this.onKeyDown, this);
     }

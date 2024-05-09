@@ -1,15 +1,20 @@
 import { _decorator, Canvas, CCFloat, CCInteger, Component, debug, director, EventInfo, instantiate, log, math, Node, Prefab, Size, Sprite, v3, Vec2, Vec3, EventTarget, Quat } from 'cc';
 import { IntentEnum, Intents } from '../Intents/Intents';
 const { ccclass, property } = _decorator;
+
+export enum UpdateEnum {
+    BoardUpdate,
+}
+
 @ccclass('TetitsModel')
 export class TetitsModel extends Component {
-    public Update: EventTarget = new EventTarget();
+    public Updated: EventTarget = new EventTarget();
 
     @property(Intents)
     private intent: Intents;
 
     //LockDelay的計時器
-    @property(CCInteger)
+    @property(CCFloat)
     public lockDelayTimerMax: number = 0;
     public lockDelayTimer: number = this.lockDelayTimerMax;
 
@@ -51,24 +56,24 @@ export class TetitsModel extends Component {
         this.intent.PlayerIntent.on(IntentEnum.HardDrop, this.onHardDrop, this);
         this.intent.PlayerIntent.on(IntentEnum.Hold, this.onHold, this);
     }
-    onHold(Hold: IntentEnum, onHold: any, arg2: this) {
+    onHold(Hold: IntentEnum, onHold: any, thisArgs: this) {
     }
-    onHardDrop(HardDrop: IntentEnum, onHardDrop: any, arg2: this) {
+    onHardDrop(HardDrop: IntentEnum, onHardDrop: any, thisArgs: this) {
         this.handlingTetromino.hardDrop();
     }
-    onSoftDrop(SoftDrop: IntentEnum, onSoftDrop: any, arg2: this) {
+    onSoftDrop(SoftDrop: IntentEnum, onSoftDrop: any, thisArgs: this) {
         this.handlingTetromino.tryMove(new Vec2(0, 1));
     }
-    onRotateR(RotateR: IntentEnum, onRotateR: any, arg2: this) {
+    onRotateR(RotateR: IntentEnum, onRotateR: any, thisArgs: this) {
         this.handlingTetromino.tryRotateR();
     }
-    onRotateL(RotateL: IntentEnum, onRotateL: any, arg2: this) {
+    onRotateL(RotateL: IntentEnum, onRotateL: any, thisArgs: this) {
         this.handlingTetromino.tryRotateL();
     }
-    onMoveRight(MoveRight: IntentEnum, onMoveRight: any, arg2: this) {
+    onMoveRight(MoveRight: IntentEnum, onMoveRight: any, thisArgs: this) {
         this.handlingTetromino.tryMove(new Vec2(1, 0));
     }
-    onMoveLeft(MoveLeft: IntentEnum, onMoveLeft: any, arg2: this) {
+    onMoveLeft(MoveLeft: IntentEnum, onMoveLeft: any, thisArgs: this) {
         this.handlingTetromino.tryMove(new Vec2(-1, 0));
     }
 
@@ -81,28 +86,11 @@ export class TetitsModel extends Component {
             this.gravityCounter = 0;
             this.gravityDrop();
         }
-        this.debugLog();
+        this.Updated.emit(UpdateEnum.BoardUpdate,this.board,this.handlingTetromino);
     }
 
 
-    private debugLog() {
-        let boardOutPut: String = "";
-        let previewBoard = this.board.map(innerboard => [...innerboard]);
-        this.handlingTetromino.shape.forEach((row, y) => {
-            row.forEach((cell, x) => {
-                if (cell != 0) {
-                    previewBoard
-                    [this.handlingTetromino.position.y + y]
-                    [this.handlingTetromino.position.x + x] = cell;
-                }
-            }, this);
-        });
-        previewBoard.forEach(element => {
-            boardOutPut += element.toString() + "\n";
-        });
-        console.log(boardOutPut);
 
-    }
 
 
     //檢查是否可以放置到棋盤上
@@ -168,7 +156,7 @@ export class TetitsModel extends Component {
 }
 
 
-class Tetromino {
+export class Tetromino {
     public constructor(shape: number[][], board: number[][]) {
         if (shape.length != 4 || shape.some(row => row.length != 4)) {
             throw new Error("Shape must be 4x4");
