@@ -23,7 +23,7 @@ export class TetitsView extends Component {
                 }
                 if (this.ViewBoard[y][x] == undefined) {
                     this.ViewBoard[y][x] = instantiate(this.tetrominoPrefab);
-                    this.ViewBoard[y][x].parent = this.node;
+                    this.ViewBoard[y][x].setParent(this.node);
                     this.ViewBoard[y][x].setPosition(x * 32, -y * 32);
                     this.ViewBoard[y][x].active = false;
                 }
