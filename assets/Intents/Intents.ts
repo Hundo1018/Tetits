@@ -29,17 +29,14 @@ export class Intents extends Component {
             case KeyCode.ARROW_DOWN:
                 this.PlayerIntent.emit(IntentEnum.SoftDrop);
                 break;
-            case KeyCode.SPACE:
+            case KeyCode.CTRL_RIGHT:
                 this.PlayerIntent.emit(IntentEnum.HardDrop);
                 break;
-            case KeyCode.KEY_Z:
-                this.PlayerIntent.emit(IntentEnum.RotateL);
-                break;
-            case KeyCode.KEY_C:
-                this.PlayerIntent.emit(IntentEnum.RotateR);
+            case KeyCode.SHIFT_RIGHT:
+                this.PlayerIntent.emit(IntentEnum.Hold);
                 break;
             case KeyCode.ARROW_UP:
-                this.PlayerIntent.emit(IntentEnum.Hold);
+                this.PlayerIntent.emit(IntentEnum.RotateL);
                 break;
         }
     }
