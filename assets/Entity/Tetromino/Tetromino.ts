@@ -7,17 +7,14 @@ export class Tetromino {
     public position: Vec2 = new Vec2(0, 0);
     //方塊的盤面，0為空
     private board: number[][] = [];
-    //方塊的中心點，用於旋轉，不管如何旋轉，中心點都不變
-    private pivot = new Vec2(0, 0);
 
 
-    public constructor(shape: number[][],pivot: Vec2, board: number[][]) {
+    public constructor(shape: number[][], board: number[][]) {
 
         if (board.length < 10 || board[0].length < 10) {
             throw new Error("Board must be at least 10x10");
         }
         this.shape = shape;
-        this.pivot = pivot;
         this.board = board;
     }
 
@@ -25,12 +22,12 @@ export class Tetromino {
 
     //嘗試旋轉方塊，如果成功則旋轉並回傳true，否則回傳false
     public tryRotateL(): boolean {
-        return this.tryRotate(-1);
+        return this.tryRotate(false);
     }
 
     //嘗試旋轉方塊，如果成功則旋轉並回傳true，否則回傳false
     public tryRotateR(): boolean {
-        return this.tryRotate(1);
+        return this.tryRotate(true);
     }
 
     //嘗試移動方塊，如果成功則移動並回傳true，否則回傳false
@@ -43,18 +40,35 @@ export class Tetromino {
         return false;
     }
 
-    //嘗試旋轉方塊，如果失敗則進行WallKick檢查，如果還是失敗則不旋轉
-    private tryRotate(direction: number): boolean {
-        let nextShape: number[][] = [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]];
-        for (let y = 0; y < 4; y++) {
-            for (let x = 0; x < 4; x++) {
-                const offsetX = x - this.pivot.x;
-                const offsetY = y - this.pivot.y;
-                const newX = this.pivot.x - offsetY;
-                const newY = this.pivot.y + offsetX;
-                nextShape[newY][newX] = this.shape[y][x];
+    private rotate(matrix: number[][],clockwise:boolean): void {
+        const n: number = matrix.length;
+        let width: number = n - 1;
+    
+        for (let i = 0; i < Math.floor(n / 2); i++) {
+            for (let j = i; j < i + width; j++) {
+                if (clockwise) {
+                    const temp: number = matrix[i][j];
+                    matrix[i][j] = matrix[n - j - 1][i];
+                    matrix[n - j - 1][i] = matrix[n - i - 1][n - j - 1];
+                    matrix[n - i - 1][n - j - 1] = matrix[j][n - i - 1];
+                    matrix[j][n - i - 1] = temp;
+                } else {
+                    const temp: number = matrix[i][j];
+                    matrix[i][j] = matrix[j][n - i - 1];
+                    matrix[j][n - i - 1] = matrix[n - i - 1][n - j - 1];
+                    matrix[n - i - 1][n - j - 1] = matrix[n - j - 1][i];
+                    matrix[n - j - 1][i] = temp;
+                }
             }
+            width -= 2;
         }
+    }
+
+    //嘗試旋轉方塊，如果失敗則進行WallKick檢查，如果還是失敗則不旋轉
+    private tryRotate(clockwise: boolean): boolean {
+
+        let nextShape = this.shape.map(inner => [...inner]);
+        this.rotate(nextShape,clockwise);
         if (this.isLegal(nextShape, this.position)) {
             this.shape = nextShape;
             return true;
@@ -65,6 +79,8 @@ export class Tetromino {
         }
         return false;
     }
+
+
 
     //WallKick檢查，如果可以則進行WallKick，規則為最寬鬆且最符合直覺的規則
     private wallKick(nextShape: number[][]): boolean {

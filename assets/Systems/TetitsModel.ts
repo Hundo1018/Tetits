@@ -5,6 +5,7 @@ const { ccclass, property } = _decorator;
 
 export enum UpdateEnum {
     BoardUpdate,
+    GameOver,
 }
 
 @ccclass('TetitsModel')
@@ -16,14 +17,12 @@ export class TetitsModel extends Component {
 
     //LockDelay的計時器
     @property(CCFloat)
-    public lockDelayTimerMax: number = 0;
+    public lockDelayTimerMax: number = 1;
     public lockDelayTimer: number = this.lockDelayTimerMax;
 
     //下落的週期，單位為秒
     @property(CCFloat)
-    public gravityPeriod: number = 3;
-
-    //下落的時間計數器，到達gravityPeriod時會下落，並歸零
+    public gravityPeriod: number = 1;
     private gravityCounter: number = 0;
 
     //遊戲棋盤大小
@@ -33,6 +32,9 @@ export class TetitsModel extends Component {
     //遊戲棋盤放置已成定局的盤面
     board: number[][] = [];
 
+    //接下來的方塊
+    TetrominoBag: Tetromino[] = [];
+
 
     //目前正在操作的方塊
     handlingTetromino: Tetromino;
@@ -40,9 +42,54 @@ export class TetitsModel extends Component {
     onLoad(): void {
         this.lockDelayTimer = this.lockDelayTimerMax;
         this.board = new Array(this.size.height).fill(0).map(() => new Array(this.size.width).fill(0));
+        
+
+        this.shuffleBag();
         this.handlingTetromino = this.getNextTetromino();
-        this.start();
     }
+
+    shuffleBag() {
+        let T = new Tetromino([
+            [0, 1, 0, ],
+            [1, 1, 1, ],
+            [0, 0, 0, ],], this.board);
+        let I = new Tetromino([
+            [0, 0, 0, 0,],
+            [1, 1, 1, 1,],
+            [0, 0, 0, 0,],
+            [0, 0, 0, 0,],] ,this.board);
+        let O = new Tetromino([
+            [ 1, 1, ],
+            [ 1, 1, ],],  this.board);
+        let L = new Tetromino([
+            [0, 0, 0, ],
+            [1, 1, 1, ],
+            [1, 0, 0, ],],  this.board);
+        let J = new Tetromino([
+            [ 0, 0, 0,],
+            [ 1, 1, 1,],
+            [ 0, 0, 1,],],  this.board);
+        let S = new Tetromino([
+            [0, 0, 0, ],
+            [0, 1, 1, ],
+            [1, 1, 0, ],],  this.board);
+        let Z = new Tetromino([
+            [0, 0, 0, ],
+            [1, 1, 0, ],
+            [0, 1, 1, ],], this.board);
+        this.TetrominoBag.push(T);
+        this.TetrominoBag.push(I);
+        this.TetrominoBag.push(O);
+        this.TetrominoBag.push(L);
+        this.TetrominoBag.push(J);
+        this.TetrominoBag.push(S);
+        this.TetrominoBag.push(Z);
+        for (let i = this.TetrominoBag.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [this.TetrominoBag[i], this.TetrominoBag[j]] = [this.TetrominoBag[j], this.TetrominoBag[i]];
+        }
+    }
+
     start() {
         this.intent.PlayerIntent.on(IntentEnum.MoveLeft, this.onMoveLeft, this);
         this.intent.PlayerIntent.on(IntentEnum.MoveRight, this.onMoveRight, this);
@@ -81,8 +128,8 @@ export class TetitsModel extends Component {
         if (this.gravityCounter >= this.gravityPeriod) {
             this.gravityCounter = 0;
             this.gravityDrop();
+            this.Updated.emit(UpdateEnum.BoardUpdate, this.board, this.handlingTetromino);
         }
-        this.Updated.emit(UpdateEnum.BoardUpdate, this.board, this.handlingTetromino);
     }
 
 
@@ -115,15 +162,25 @@ export class TetitsModel extends Component {
 
     //重力下落，如果無法下落則放置，在放置前會檢查是否有LockDelay
     private gravityDrop(): void {
+        //如果無法下落，則放置
         if (!this.handlingTetromino.tryMove(new Vec2(0, 1))) {
             if (this.lockDelayTimer <= 0) {
                 this.placeTetromino(this.handlingTetromino);
                 this.checkClearLines();
+                //檢查遊戲是否結束
+                if (this.handlingTetromino.position.y == 0 &&
+                    !this.handlingTetromino.isLegal(this.handlingTetromino.shape, this.handlingTetromino.position)) {
+                    this.Updated.emit(UpdateEnum.GameOver);
+                }
+                
                 this.lockDelayTimer = this.lockDelayTimerMax;
                 this.handlingTetromino = this.getNextTetromino();
             } else {
                 this.lockDelayTimer--;
             }
+        }
+        else {
+            this.lockDelayTimer = this.lockDelayTimerMax;
         }
     }
 
@@ -133,7 +190,7 @@ export class TetitsModel extends Component {
         for (let y = 0; y < this.board.length; y++) {
             if (this.board[y].every(cell => cell != 0)) {
                 this.board.splice(y, 1);
-                this.board.unshift(new Array(10).fill(0));
+                this.board.unshift(new Array(this.board[0].length).fill(0));
                 clearLines++;
             }
         }
@@ -142,14 +199,13 @@ export class TetitsModel extends Component {
 
     //得到下一個方塊
     private getNextTetromino(): Tetromino {
-        return new Tetromino([
-            [0, 0, 0, 0,],
-            [1, 1, 1, 0,],
-            [0, 1, 0, 0,],
-            [0, 0, 0, 0,],],
-            new Vec2(1, 1),
-            this.board);
+        if (this.TetrominoBag.length == 0) {
+            this.shuffleBag();
+        }
+        return this.TetrominoBag.pop();
     }
 }
 
+
+export { Tetromino };
 

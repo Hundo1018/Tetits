@@ -38,6 +38,12 @@ export class Intents extends Component {
             case KeyCode.KEY_W:
                 this.PlayerIntent.emit(IntentEnum.RotateL);
                 break;
+            case KeyCode.KEY_E:
+                this.PlayerIntent.emit(IntentEnum.RotateR);
+                break;
+            case KeyCode.KEY_Q:
+                this.PlayerIntent.emit(IntentEnum.RotateL);
+                break;
         }
     }
     onDestroy(): void {
