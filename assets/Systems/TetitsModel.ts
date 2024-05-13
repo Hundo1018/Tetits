@@ -128,8 +128,8 @@ export class TetitsModel extends Component {
         if (this.gravityCounter >= this.gravityPeriod) {
             this.gravityCounter = 0;
             this.gravityDrop();
-            this.Updated.emit(UpdateEnum.BoardUpdate, this.board, this.handlingTetromino);
         }
+        this.Updated.emit(UpdateEnum.BoardUpdate, this.board, this.handlingTetromino);
     }
 
 
