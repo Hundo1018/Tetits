@@ -20,22 +20,22 @@ export class Intents extends Component {
     }
     onKeyDown(event: EventKeyboard) {
         switch (event.keyCode) {
-            case KeyCode.ARROW_LEFT:
+            case KeyCode.KEY_A:
                 this.PlayerIntent.emit(IntentEnum.MoveLeft);
                 break;
-            case KeyCode.ARROW_RIGHT:
+            case KeyCode.KEY_D:
                 this.PlayerIntent.emit(IntentEnum.MoveRight);
                 break;
-            case KeyCode.ARROW_DOWN:
+            case KeyCode.KEY_S:
                 this.PlayerIntent.emit(IntentEnum.SoftDrop);
                 break;
-            case KeyCode.CTRL_RIGHT:
+            case KeyCode.SPACE:
                 this.PlayerIntent.emit(IntentEnum.HardDrop);
                 break;
-            case KeyCode.SHIFT_RIGHT:
+            case KeyCode.SHIFT_LEFT:
                 this.PlayerIntent.emit(IntentEnum.Hold);
                 break;
-            case KeyCode.ARROW_UP:
+            case KeyCode.KEY_W:
                 this.PlayerIntent.emit(IntentEnum.RotateL);
                 break;
         }
