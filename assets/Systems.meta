@@ -5,5 +5,19 @@
   "uuid": "4bd405e4-8579-47bf-b122-5522486f8beb",
   "files": [],
   "subMetas": {},
-  "userData": {}
+  "userData": {
+    "bundleFilterConfig": [
+      {
+        "range": "include",
+        "type": "url",
+        "patchOption": {
+          "patchType": "glob",
+          "value": "db://assets/Systems/**/*"
+        },
+        "assets": [
+          ""
+        ]
+      }
+    ]
+  }
 }
