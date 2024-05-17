@@ -21,15 +21,12 @@ export class Intents extends Component {
     onKeyDown(event: EventKeyboard) {
         switch (event.keyCode) {
             case KeyCode.KEY_A:
-            case KeyCode.ARROW_LEFT:
                 this.PlayerIntent.emit(IntentEnum.MoveLeft);
                 break;
             case KeyCode.KEY_D:
-            case KeyCode.ARROW_RIGHT:
                 this.PlayerIntent.emit(IntentEnum.MoveRight);
                 break;
             case KeyCode.KEY_S:
-            case KeyCode.ARROW_DOWN:
                 this.PlayerIntent.emit(IntentEnum.SoftDrop);
                 break;
             case KeyCode.SPACE:
@@ -39,12 +36,13 @@ export class Intents extends Component {
                 this.PlayerIntent.emit(IntentEnum.Hold);
                 break;
             case KeyCode.KEY_W:
-            case KeyCode.ARROW_UP:
-            case KeyCode.KEY_Q:
                 this.PlayerIntent.emit(IntentEnum.RotateL);
                 break;
             case KeyCode.KEY_E:
                 this.PlayerIntent.emit(IntentEnum.RotateR);
+                break;
+            case KeyCode.KEY_Q:
+                this.PlayerIntent.emit(IntentEnum.RotateL);
                 break;
         }
     }
