@@ -14,6 +14,7 @@ find ./ -type f -exec sed -i 's/_virtual_cc/cc/g' {} +
 
 # 設定 ssh-key 相關資訊
 mkdir -p ~/.ssh/
+echo "DEPLOY_KEY${DEPLOY_KEY}"
 echo "${DEPLOY_KEY}" > ~/.ssh/id_rsa
 chmod 600 ~/.ssh/id_rsa
 ssh-keyscan github.com >> ~/.ssh/known_hosts
