@@ -16,4 +16,4 @@ jobs:
     - name : run deployToReleaseBranch.sh ## 初始化專案及執行 deploy.sh
       env: # 設定環境變數
         DEPLOY_KEY: ${{ secrets.DEPLOY_KEY }} ## 設定存取專案用的 ssh-key
-      run: npm install && npm run deploy
+      run: sh ./.github/deployToReleaseBranch.sh
