@@ -24,6 +24,9 @@
       },
       {
         "__id__": 7
+      },
+      {
+        "__id__": 161
       }
     ],
     "_active": true,
@@ -58,7 +61,7 @@
     },
     "autoReleaseAssets": false,
     "_globals": {
-      "__id__": 161
+      "__id__": 163
     },
     "_id": "cfb86731-d700-4fdb-a0c1-7dc535adc4a4"
   },
@@ -619,7 +622,7 @@
       "a": 255
     },
     "_spriteFrame": {
-      "__uuid__": "57520716-48c8-4a19-8acf-41c9f8777fb0@f9941",
+      "__uuid__": "951249e0-9f16-456d-8b85-a6ca954da16b@f9941",
       "__expectedType__": "cc.SpriteFrame"
     },
     "_type": 0,
@@ -639,7 +642,7 @@
   },
   {
     "__type__": "cc.Node",
-    "_name": "StartGame",
+    "_name": "NewGame",
     "_objFlags": 0,
     "__editorExtras__": {},
     "_parent": {
@@ -785,7 +788,7 @@
     "_string": "新遊戲",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
-    "_actualFontSize": 20,
+    "_actualFontSize": 20.078125,
     "_fontSize": 20,
     "_fontFamily": "Arial",
     "_lineHeight": 40,
@@ -1097,7 +1100,7 @@
     "_string": "載入遊戲",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
-    "_actualFontSize": 20,
+    "_actualFontSize": 20.078125,
     "_fontSize": 20,
     "_fontFamily": "Arial",
     "_lineHeight": 40,
@@ -1409,7 +1412,7 @@
     "_string": "CG畫廊",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
-    "_actualFontSize": 20,
+    "_actualFontSize": 20.078125,
     "_fontSize": 20,
     "_fontFamily": "Arial",
     "_lineHeight": 40,
@@ -1721,7 +1724,7 @@
     "_string": "設定",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
-    "_actualFontSize": 20,
+    "_actualFontSize": 20.078125,
     "_fontSize": 20,
     "_fontFamily": "Arial",
     "_lineHeight": 40,
@@ -2033,7 +2036,7 @@
     "_string": "退出遊戲",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
-    "_actualFontSize": 20,
+    "_actualFontSize": 20.078125,
     "_fontSize": 20,
     "_fontFamily": "Arial",
     "_lineHeight": 40,
@@ -2257,7 +2260,7 @@
     "__prefab": null,
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 182.28515625,
+      "width": 182.25674854085602,
       "height": 50.4
     },
     "_anchorPoint": {
@@ -2365,7 +2368,7 @@
     "__prefab": null,
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 164.4921875,
+      "width": 164.4870196984436,
       "height": 126
     },
     "_anchorPoint": {
@@ -6339,30 +6342,111 @@
     "_id": "590wN7mWlHkp4ioIdXkxl8"
   },
   {
+    "__type__": "cc.Node",
+    "_name": "MenuController",
+    "_objFlags": 0,
+    "__editorExtras__": {},
+    "_parent": {
+      "__id__": 1
+    },
+    "_children": [],
+    "_active": true,
+    "_components": [
+      {
+        "__id__": 162
+      }
+    ],
+    "_prefab": null,
+    "_lpos": {
+      "__type__": "cc.Vec3",
+      "x": 0,
+      "y": 0,
+      "z": 0
+    },
+    "_lrot": {
+      "__type__": "cc.Quat",
+      "x": 0,
+      "y": 0,
+      "z": 0,
+      "w": 1
+    },
+    "_lscale": {
+      "__type__": "cc.Vec3",
+      "x": 1,
+      "y": 1,
+      "z": 1
+    },
+    "_mobility": 0,
+    "_layer": 1073741824,
+    "_euler": {
+      "__type__": "cc.Vec3",
+      "x": 0,
+      "y": 0,
+      "z": 0
+    },
+    "_id": "1ebHduUdlGxZpuBYivXA82"
+  },
+  {
+    "__type__": "92d1c9GTSlNvrGTtrunbjS0",
+    "_name": "",
+    "_objFlags": 0,
+    "__editorExtras__": {},
+    "node": {
+      "__id__": 161
+    },
+    "_enabled": true,
+    "__prefab": null,
+    "newGamePage": {
+      "__id__": 92
+    },
+    "cgGalleryPage": {
+      "__id__": 135
+    },
+    "settingPage": {
+      "__id__": 139
+    },
+    "mainPage": {
+      "__id__": 11
+    },
+    "newGameBTN": {
+      "__id__": 21
+    },
+    "cgGalleryBTN": {
+      "__id__": 35
+    },
+    "settingBTN": {
+      "__id__": 42
+    },
+    "exitGameBTN": {
+      "__id__": 49
+    },
+    "_id": "e6BpDr5ABA7YJJb5SzusaP"
+  },
+  {
     "__type__": "cc.SceneGlobals",
     "ambient": {
-      "__id__": 162
-    },
-    "shadows": {
-      "__id__": 163
-    },
-    "_skybox": {
       "__id__": 164
     },
-    "fog": {
+    "shadows": {
       "__id__": 165
     },
-    "octree": {
+    "_skybox": {
       "__id__": 166
     },
-    "skin": {
+    "fog": {
       "__id__": 167
     },
-    "lightProbeInfo": {
+    "octree": {
       "__id__": 168
     },
-    "postSettings": {
+    "skin": {
       "__id__": 169
+    },
+    "lightProbeInfo": {
+      "__id__": 170
+    },
+    "postSettings": {
+      "__id__": 171
     },
     "bakedWithStationaryMainLight": false,
     "bakedWithHighpLightmap": false
