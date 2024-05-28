@@ -1,7 +1,7 @@
 [
   {
     "__type__": "cc.SceneAsset",
-    "_name": "scene-character-test",
+    "_name": "TestCharacterScene",
     "_objFlags": 0,
     "__editorExtras__": {},
     "_native": "",
@@ -11,7 +11,7 @@
   },
   {
     "__type__": "cc.Scene",
-    "_name": "scene-001",
+    "_name": "scene-character-test",
     "_objFlags": 0,
     "__editorExtras__": {},
     "_parent": null,
@@ -178,9 +178,9 @@
     "_prefab": null,
     "_lpos": {
       "__type__": "cc.Vec3",
-      "x": -1.164,
-      "y": 2.225,
-      "z": 1.612
+      "x": -1.222,
+      "y": 2.323,
+      "z": 1.458
     },
     "_lrot": {
       "__type__": "cc.Quat",
