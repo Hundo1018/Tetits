@@ -1,4 +1,4 @@
-import { _decorator, CCInteger, color, Color, Component, instantiate, Node, Prefab, Sprite, UIOpacity, Vec2 } from 'cc';
+import { _decorator, CCInteger, Component, instantiate, Node, Prefab, UIOpacity, Vec2 } from 'cc';
 import { TetitsModel, UpdateEnum, Tetromino } from './TetitsModel';
 const { ccclass, property } = _decorator;
 
@@ -86,11 +86,11 @@ export class TetitsView extends Component {
             }, this);
         });
 
-        let str:string = '';
-        previewBoard.forEach((row,y)=>{
-            str += row + '\n';
-        });
-        console.log(str);
+        // let str:string = '';
+        // previewBoard.forEach((row,y)=>{
+        //     str += row + '\n';
+        // });
+        // console.log(str);
         return previewBoard;
     }
 

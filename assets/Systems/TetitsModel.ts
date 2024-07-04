@@ -1,4 +1,4 @@
-import { _decorator, Canvas, CCFloat, CCInteger, Component, debug, director, EventInfo, instantiate, log, math, Node, Prefab, Size, Sprite, v3, Vec2, Vec3, EventTarget, Quat } from 'cc';
+import { _decorator, CCFloat, Component, Size, Vec2, EventTarget } from 'cc';
 import { IntentEnum, Intents } from '../Intents/Intents';
 import { Tetromino } from '../Entity/Tetromino/Tetromino';
 const { ccclass, property } = _decorator;
@@ -19,7 +19,7 @@ export class TetitsModel extends Component {
 
     //LockDelay的計時器，單位為秒
     @property(CCFloat)
-    public lockDelayTimerMax: number = 1.5;
+    public lockDelayTimerMax: number = 1;
     public lockDelayTimer: number = this.lockDelayTimerMax;
     private isDelayLocking = false;
 
@@ -33,14 +33,14 @@ export class TetitsModel extends Component {
     public size: Size = new Size(10, 20);
     //邏輯相關
     //遊戲棋盤放置已成定局的盤面
-    board: number[][] = [];
+    private board: number[][] = [];
 
     //接下來的方塊
-    TetrominoBag: Tetromino[] = [];
+    private TetrominoBag: Tetromino[] = [];
 
 
     //目前正在操作的方塊
-    handlingTetromino: Tetromino;
+    private handlingTetromino: Tetromino;
     
     onLoad(): void {
         this.lockDelayTimer = this.lockDelayTimerMax;
@@ -52,7 +52,7 @@ export class TetitsModel extends Component {
     }
 
     //洗牌
-    shuffleBag() {
+    private shuffleBag() {
         let T = new Tetromino([
             [0, 1, 0,],
             [1, 1, 1,],
@@ -104,24 +104,24 @@ export class TetitsModel extends Component {
         this.intent.PlayerIntent.on(IntentEnum.HardDrop, this.onHardDrop, this);
         this.intent.PlayerIntent.on(IntentEnum.Hold, this.onHold, this);
     }
-    onHold(Hold: IntentEnum, onHold: any, thisArgs: this) {
+    private onHold(Hold: IntentEnum, onHold: any, thisArgs: this) {
     }
-    onHardDrop(HardDrop: IntentEnum, onHardDrop: any, thisArgs: this) {
+    private onHardDrop(HardDrop: IntentEnum, onHardDrop: any, thisArgs: this) {
         this.handlingTetromino.hardDrop();
     }
-    onSoftDrop(SoftDrop: IntentEnum, onSoftDrop: any, thisArgs: this) {
+    private onSoftDrop(SoftDrop: IntentEnum, onSoftDrop: any, thisArgs: this) {
         this.handlingTetromino.tryMove(new Vec2(0, 1));
     }
-    onRotateR(RotateR: IntentEnum, onRotateR: any, thisArgs: this) {
+    private onRotateR(RotateR: IntentEnum, onRotateR: any, thisArgs: this) {
         this.handlingTetromino.tryRotateR();
     }
-    onRotateL(RotateL: IntentEnum, onRotateL: any, thisArgs: this) {
+    private onRotateL(RotateL: IntentEnum, onRotateL: any, thisArgs: this) {
         this.handlingTetromino.tryRotateL();
     }
-    onMoveRight(MoveRight: IntentEnum, onMoveRight: any, thisArgs: this) {
+    private onMoveRight(MoveRight: IntentEnum, onMoveRight: any, thisArgs: this) {
         this.handlingTetromino.tryMove(new Vec2(1, 0));
     }
-    onMoveLeft(MoveLeft: IntentEnum, onMoveLeft: any, thisArgs: this) {
+    private onMoveLeft(MoveLeft: IntentEnum, onMoveLeft: any, thisArgs: this) {
         this.handlingTetromino.tryMove(new Vec2(-1, 0));
     }
 
@@ -131,10 +131,10 @@ export class TetitsModel extends Component {
         //發送更新事件
         this.Updated.emit(UpdateEnum.BoardUpdate, this.board, this.handlingTetromino);
         let isTimeToDrop = this.checkGravityDrop(deltaTime);
+        //FIXME:是否需要鎖定不應該受到重力的週期影響
         //如果時間到了，則下落
         if (isTimeToDrop) {
             //如果下落失敗，則鎖定方塊
-            //FIXME:是否需要鎖定不應該受到重力的週期影響
             this.isDelayLocking = !this.handlingTetromino.tryMove(new Vec2(0, 1));
         }
         if (!this.isDelayLocking) {
@@ -200,7 +200,7 @@ export class TetitsModel extends Component {
     //將方塊放置在棋盤上
     private placeTetromino(tetromino: Tetromino): void {
         if (!this.tryPlaceTetromino(tetromino)) {
-            throw new Error("Cannot place tetromino");
+            this.Updated.emit(UpdateEnum.GameOver);
         }
     }
 
