@@ -378,7 +378,6 @@
         ],
         "_props": [
           {
-            "normalStrength": 0,
             "mainTexture": {
               "__uuid__": "305a9dbb-3373-4bd8-95f3-df2e99224868@6c48a",
               "__expectedType__": "cc.Texture2D"
@@ -392,6 +391,14 @@
               "__expectedType__": "cc.Texture2D"
             },
             "occlusionMap": {
+              "__uuid__": "305a9dbb-3373-4bd8-95f3-df2e99224868@6c48a",
+              "__expectedType__": "cc.Texture2D"
+            },
+            "preIntegratedSkinMap": {
+              "__uuid__": "305a9dbb-3373-4bd8-95f3-df2e99224868@6c48a",
+              "__expectedType__": "cc.Texture2D"
+            },
+            "sssCurvatureMap": {
               "__uuid__": "305a9dbb-3373-4bd8-95f3-df2e99224868@6c48a",
               "__expectedType__": "cc.Texture2D"
             },
