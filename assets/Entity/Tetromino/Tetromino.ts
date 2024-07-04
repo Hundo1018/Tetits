@@ -9,13 +9,23 @@ export class Tetromino {
     private board: number[][] = [];
 
 
-    public constructor(shape: number[][], board: number[][]) {
-
-        if (board.length < 10 || board[0].length < 10) {
-            throw new Error("Board must be at least 10x10");
+    public constructor(shape?: number[][], board?: number[][]) {
+        if (shape && board) {
+            if (board.length < 10 || board[0].length < 10) {
+                throw new Error("Board must be at least 10x10");
+            }
+            this.shape = shape;
+            this.board = board;
         }
-        this.shape = shape;
-        this.board = board;
+    }
+
+    //使用深度複製建立新的實例
+    public static createByCopy(copyTarget: Tetromino): Tetromino {
+        let instance = new Tetromino();
+        instance.shape = copyTarget.shape.map(inner => [...inner]);
+        instance.board = copyTarget.board.map(inner => [...inner]);
+        instance.position = copyTarget.position.clone();
+        return instance;
     }
 
 
@@ -40,10 +50,10 @@ export class Tetromino {
         return false;
     }
 
-    private rotate(matrix: number[][],clockwise:boolean): void {
+    private rotate(matrix: number[][], clockwise: boolean): void {
         const n: number = matrix.length;
         let width: number = n - 1;
-    
+
         for (let i = 0; i < Math.floor(n / 2); i++) {
             for (let j = i; j < i + width; j++) {
                 if (clockwise) {
@@ -68,7 +78,7 @@ export class Tetromino {
     private tryRotate(clockwise: boolean): boolean {
 
         let nextShape = this.shape.map(inner => [...inner]);
-        this.rotate(nextShape,clockwise);
+        this.rotate(nextShape, clockwise);
         if (this.isLegal(nextShape, this.position)) {
             this.shape = nextShape;
             return true;

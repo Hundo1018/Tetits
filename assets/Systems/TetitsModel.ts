@@ -41,7 +41,7 @@ export class TetitsModel extends Component {
 
     //目前正在操作的方塊
     handlingTetromino: Tetromino;
-
+    
     onLoad(): void {
         this.lockDelayTimer = this.lockDelayTimerMax;
         this.board = new Array(this.size.height).fill(0).map(() => new Array(this.size.width).fill(0));
