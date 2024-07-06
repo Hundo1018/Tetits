@@ -1,6 +1,5 @@
-import { _decorator, CCFloat, CCInteger, Component } from 'cc';
+import { _decorator, CCFloat, CCInteger, Component, ProgressBar, EventTarget } from 'cc';
 import { TetitsModel, UpdateEnum } from './TetitsModel';
-import { StageBar } from '../UI/StageBar';
 const { ccclass, property } = _decorator;
 
 @ccclass('StageController')
@@ -24,8 +23,9 @@ export class StageController extends Component {
     public stageRequireLines = [];
     private stageRequireTotal = 0;
 
-    @property(StageBar)
-    public stageBar: StageBar = null!;
+
+    @property([ProgressBar])
+    public progressBars: ProgressBar[] = [];
 
     private currentStage = 0;
     start() {
@@ -41,13 +41,17 @@ export class StageController extends Component {
         this.stageRequireLines[this.currentStage] -= combo;
         if (this.stageRequireLines[this.currentStage] <= 0) {
             this.stageRequireLines[this.currentStage] = 0;
+            this.progressBars[this.currentStage].progress = 0;
             this.currentStage += 1;
-            //TODO:切換階段
+            let isGmaeStageDone: boolean = this.currentStage > this.stageRequireLines.length;
+            this.StageChanged.emit(this.currentStage,isGmaeStageDone);
         }
         let subtotal = 0;
         this.stageRequireLines.forEach((x) => { subtotal += x; });
-        this.stageBar.changeProgress(subtotal / this.stageRequireTotal);
-        
+
+        //TODO: 使用Tween漸變
+        this.progressBars[this.currentStage].progress = (subtotal / this.stageRequireTotal);
+
     }
 
 
