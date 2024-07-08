@@ -487,9 +487,7 @@
         ],
         "_states": [
           {
-            "rasterizerState": {
-              "cullMode": 0
-            },
+            "rasterizerState": {},
             "depthStencilState": {},
             "blendState": {
               "targets": [
@@ -527,6 +525,13 @@
         ],
         "_props": [
           {
+            "mainColor": {
+              "__type__": "cc.Color",
+              "r": 255,
+              "g": 239,
+              "b": 218,
+              "a": 255
+            },
             "mainTexture": {
               "__uuid__": "e234d933-ec6d-4bbf-8930-cda67031532a@6c48a",
               "__expectedType__": "cc.Texture2D"
@@ -550,7 +555,16 @@
             "maskMap": {
               "__uuid__": "e234d933-ec6d-4bbf-8930-cda67031532a@6c48a",
               "__expectedType__": "cc.Texture2D"
-            }
+            },
+            "extinction": 0.497,
+            "transmitColor": {
+              "__type__": "cc.Color",
+              "r": 255,
+              "g": 0,
+              "b": 0,
+              "a": 255
+            },
+            "dualLobeIntensity": 0.01
           },
           {},
           {},

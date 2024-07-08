@@ -35,7 +35,7 @@
     "_active": true,
     "_components": [],
     "_prefab": {
-      "__id__": 35
+      "__id__": 33
     },
     "_lpos": {
       "__type__": "cc.Vec3",
@@ -66,7 +66,7 @@
     },
     "autoReleaseAssets": false,
     "_globals": {
-      "__id__": 36
+      "__id__": 34
     },
     "_id": "e0fbf9da-71a9-4dcc-9170-2e19da3d5b4b"
   },
@@ -515,7 +515,7 @@
       "__id__": 25
     },
     "asset": {
-      "__uuid__": "4c43e509-ead5-4245-9ce7-0ab01c5e02f3@4d8ef",
+      "__uuid__": "d2107387-4991-4103-8b6b-3dc20e40d84c",
       "__expectedType__": "cc.Prefab"
     },
     "fileId": "c0lO7SywpSyZk/jyL0FMrZ",
@@ -543,9 +543,6 @@
       },
       {
         "__id__": 32
-      },
-      {
-        "__id__": 33
       }
     ],
     "removedComponents": []
@@ -613,22 +610,6 @@
     }
   },
   {
-    "__type__": "CCPropertyOverrideInfo",
-    "targetInfo": {
-      "__id__": 34
-    },
-    "propertyPath": [
-      "playOnLoad"
-    ],
-    "value": true
-  },
-  {
-    "__type__": "cc.TargetInfo",
-    "localID": [
-      "8bGeIV+CdSFZM+gXT8grb8"
-    ]
-  },
-  {
     "__type__": "cc.PrefabInfo",
     "root": null,
     "asset": null,
@@ -650,28 +631,28 @@
   {
     "__type__": "cc.SceneGlobals",
     "ambient": {
-      "__id__": 37
+      "__id__": 35
     },
     "shadows": {
-      "__id__": 38
+      "__id__": 36
     },
     "_skybox": {
-      "__id__": 39
+      "__id__": 37
     },
     "fog": {
-      "__id__": 40
+      "__id__": 38
     },
     "octree": {
-      "__id__": 41
+      "__id__": 39
     },
     "skin": {
-      "__id__": 42
+      "__id__": 40
     },
     "lightProbeInfo": {
-      "__id__": 43
+      "__id__": 41
     },
     "postSettings": {
-      "__id__": 44
+      "__id__": 42
     },
     "bakedWithStationaryMainLight": false,
     "bakedWithHighpLightmap": false
