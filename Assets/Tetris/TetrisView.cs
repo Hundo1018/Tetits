@@ -1,0 +1,105 @@
+using System;
+using UnityEngine;
+
+public class TetrisView : MonoBehaviour
+{
+    public GameObject tetrominoUnit;
+    public Tetris model;
+    public int previewOpacity = 127;
+    public float sizeWidth = 5.12f;
+    private GameObject[][] viewBoard;
+
+    void Start()
+    {
+        model.BoardUpdated += OnBoardUpdate;
+        InitializeViewBoard();
+    }
+
+    void InitializeViewBoard()
+    {
+        viewBoard = new GameObject[model.size.y][];
+        for (int y = 0 ; y < model.size.y ; y++)
+        {
+            viewBoard[y] = new GameObject[model.size.x];
+            for (int x = 0; x < model.size.x; x++)
+            {
+                float positionX = x * sizeWidth;
+                float positionY = y * sizeWidth;
+
+                viewBoard[y][x] = Instantiate(tetrominoUnit, transform);
+                viewBoard[y][x].transform.localPosition = new Vector3(positionX, positionY, 0);
+                viewBoard[y][x].SetActive(false);
+            }
+        }
+    }
+
+    void Update()
+    {
+        // 若有需要每幀更新的內容，可以在這裡添加
+    }
+
+    void OnBoardUpdate(int[][] board, Tetromino handlingTetromino)
+    {
+        int[][] previewBoardArr = PreviewBoard(board, handlingTetromino);
+        for (int y = 0; y < previewBoardArr.Length; y++)
+        {
+            for (int x = 0; x < previewBoardArr[y].Length; x++)
+            {
+                if (previewBoardArr[y][x] == 0)
+                {
+                    viewBoard[y][x].SetActive(false);
+                }
+                else
+                {
+                    viewBoard[y][x].SetActive(true);
+                    var opacity = viewBoard[y][x].GetComponent<SpriteRenderer>().color;
+                    opacity.a = previewBoardArr[y][x] < 0 ? previewOpacity / 255f : 1f;
+                    viewBoard[y][x].GetComponent<SpriteRenderer>().color = opacity;
+                }
+            }
+        }
+    }
+
+    int[][] PreviewBoard(int[][] board, Tetromino handlingTetromino)
+    {
+        int[][] previewBoard = new int[board.Length][];
+        for (int i = 0; i < board.Length; i++)
+        {
+            previewBoard[i] = new int[board[i].Length];
+            Array.Copy(board[i], previewBoard[i], board[i].Length);
+        }
+        for (int y = 0; y < handlingTetromino.Shape.GetLength(0); y++)
+        {
+            for (int x = 0; x < handlingTetromino.Shape.GetLength(1); x++)
+            {
+                if (handlingTetromino.Shape[y, x] != 0)
+                {
+                    previewBoard[handlingTetromino.Position.y + y][handlingTetromino.Position.x + x] = handlingTetromino.Shape[y, x];
+                }
+            }
+        }
+
+        Tetromino dropPreviewTetromino = new Tetromino(handlingTetromino);
+        while (dropPreviewTetromino.TryMove(board, Vector2Int.down)) { }
+
+        for (int y = 0; y < dropPreviewTetromino.Shape.GetLength(0); y++)
+        {
+            for (int x = 0; x < dropPreviewTetromino.Shape.GetLength(1); x++)
+            {
+                int previewX = dropPreviewTetromino.Position.x + x;
+                int previewY = dropPreviewTetromino.Position.y + y;
+                if (dropPreviewTetromino.Shape[y, x] != 0 && previewBoard[previewY][previewX] == 0)
+                {
+                    previewBoard[previewY][previewX] = -1;
+                }
+            }
+        }
+
+        return previewBoard;
+    }
+
+    void OnDestroy()
+    {
+        model.BoardUpdated -= OnBoardUpdate;
+    }
+}
