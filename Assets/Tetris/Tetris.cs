@@ -31,7 +31,6 @@ public class Tetris : MonoBehaviour, Intents.ITetrisControlsActions
     /// 棋盤只放已固定的形狀
     /// </summary>
     public int[][] board = new int[20][];
-    public string DebugBoard = "00000\r\n000000";
 
     private Tetromino[] _tetrominoBag = new Tetromino[7];
 
@@ -175,18 +174,22 @@ public class Tetris : MonoBehaviour, Intents.ITetrisControlsActions
         return true;
     }
 
+    //清行
     private int CheckClearLines()
     {
         int clearLines = 0;
-        for (int y = 0; y < board.Length; y++)
+        //從最上方往下掃
+        for (int y = board.Length - 1; y >= 0; y--)
         {
+            //某一行非0
             if (board[y].All(cell => cell != 0))
             {
-                for (int i = y; i > 0; i--)
+                //該行以上全部往下移動一行
+                for (int i = y; i < board.Length - 1; i++)
                 {
-                    board[i] = (int[])board[i - 1].Clone();
+                    board[i] = (int[])board[i + 1].Clone();
                 }
-                board[0] = new int[size.x];
+                board[^1] = new int[size.x];
                 clearLines++;
             }
         }
@@ -217,7 +220,6 @@ public class Tetris : MonoBehaviour, Intents.ITetrisControlsActions
 
     public void OnRotate(InputAction.CallbackContext context)
     {
-        print(context);
         if (context.phase != InputActionPhase.Performed)
             return;
         float axis = context.ReadValue<float>();

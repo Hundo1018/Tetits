@@ -15,16 +15,21 @@ public class TetrisView : MonoBehaviour
         InitializeViewBoard();
     }
 
+
+
     void InitializeViewBoard()
     {
         viewBoard = new GameObject[model.size.y][];
-        for (int y = 0 ; y < model.size.y ; y++)
+        float totalWidth = model.size.x * sizeWidth;
+        float paddingX = -totalWidth / 2 + sizeWidth / 2;
+        float paddingY = -model.size.y * sizeWidth / 2 + sizeWidth / 2;
+        for (int y = 0; y < model.size.y; y++)
         {
             viewBoard[y] = new GameObject[model.size.x];
             for (int x = 0; x < model.size.x; x++)
             {
-                float positionX = x * sizeWidth;
-                float positionY = y * sizeWidth;
+                float positionX = paddingX + x * sizeWidth;
+                float positionY = paddingY + y * sizeWidth;
 
                 viewBoard[y][x] = Instantiate(tetrominoUnit, transform);
                 viewBoard[y][x].transform.localPosition = new Vector3(positionX, positionY, 0);

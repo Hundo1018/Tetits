@@ -273,7 +273,7 @@ MonoBehaviour:
     type: 3}
   model: {fileID: 657801618}
   previewOpacity: 127
-  sizeWidth: 5
+  sizeWidth: 5.12
 --- !u!4 &494674628
 Transform:
   m_ObjectHideFlags: 0
@@ -377,7 +377,7 @@ Transform:
   m_GameObject: {fileID: 516191896}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1, z: -100}
+  m_LocalPosition: {x: 0, y: 1, z: -70}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -461,8 +461,7 @@ MonoBehaviour:
   isDelayLocking: 0
   gravityPeriod: 1
   gravityCounter: 0
-  size: {x: 20, y: 20}
-  DebugBoard: 
+  size: {x: 10, y: 20}
 --- !u!4 &657801619
 Transform:
   m_ObjectHideFlags: 0
@@ -494,7 +493,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1077923539
 Transform:
   m_ObjectHideFlags: 0
@@ -552,7 +551,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: e652c408d18109043b26937aed414249, type: 3}
-  m_Color: {r: 0.2627451, g: 0.24313726, b: 0.22352941, a: 0.20784314}
+  m_Color: {r: 1, g: 1, b: 1, a: 0.20784314}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 2
