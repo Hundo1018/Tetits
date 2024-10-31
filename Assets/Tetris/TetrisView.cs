@@ -79,7 +79,11 @@ public class TetrisView : MonoBehaviour
             {
                 if (handlingTetromino.Shape[y, x] != 0)
                 {
-                    previewBoard[handlingTetromino.Position.y + y][handlingTetromino.Position.x + x] = handlingTetromino.Shape[y, x];
+                    int nx = handlingTetromino.Position.x + x;
+                    int ny = handlingTetromino.Position.y + y;
+                    if (nx < 0 || nx >= previewBoard[0].Length) continue;
+                    if (ny < 0 || ny >= previewBoard.Length) continue;
+                    previewBoard[ny][nx] = handlingTetromino.Shape[y, x];
                 }
             }
         }
@@ -93,6 +97,9 @@ public class TetrisView : MonoBehaviour
             {
                 int previewX = dropPreviewTetromino.Position.x + x;
                 int previewY = dropPreviewTetromino.Position.y + y;
+                if (previewX < 0 || previewX >= previewBoard[0].Length) continue;
+                if (previewY < 0 || previewY >= previewBoard.Length) continue;
+
                 if (dropPreviewTetromino.Shape[y, x] != 0 && previewBoard[previewY][previewX] == 0)
                 {
                     previewBoard[previewY][previewX] = -1;

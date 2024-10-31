@@ -1,12 +1,8 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading;
-using Unity.VisualScripting.Dependencies.NCalc;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.TextCore;
+
 
 
 public class Tetris : MonoBehaviour, Intents.ITetrisControlsActions
@@ -15,7 +11,7 @@ public class Tetris : MonoBehaviour, Intents.ITetrisControlsActions
     public event Action<int> LineCleared = delegate { };
     public event Action<int[][], Tetromino> TetrominoPlaced = delegate { };
     public event Action<int[][]> GameOver = delegate { };
-
+    // public event Action<int> T = delegate { };
     private Intents _controls;
 
     public float lockDelayTimerMax = 1f;
@@ -23,14 +19,14 @@ public class Tetris : MonoBehaviour, Intents.ITetrisControlsActions
     public bool isDelayLocking = false;
 
     public float gravityPeriod = 1f;
-    public float gravityCounter = 0f;
+    public float gravityTimer = 0f;
 
     public Vector2Int size = new(10, 20);
 
     /// <summary>
     /// 棋盤只放已固定的形狀
     /// </summary>
-    public int[][] board = new int[20][];
+    public int[][] matrix = new int[20][];
 
     private Tetromino[] _tetrominoBag = new Tetromino[7];
 
@@ -51,10 +47,10 @@ public class Tetris : MonoBehaviour, Intents.ITetrisControlsActions
         _controls = new Intents();
         _controls.TetrisControls.SetCallbacks(this);
         lockDelayTimer = lockDelayTimerMax;
-        board = new int[size.y][];
+        matrix = new int[size.y][];
         for (int i = 0; i < size.y; i++)
         {
-            board[i] = new int[size.x];
+            matrix[i] = new int[size.x];
         }
         TetrominoPlaced += (board, tetromino) =>
         {
@@ -107,15 +103,20 @@ public class Tetris : MonoBehaviour, Intents.ITetrisControlsActions
         _tetrominoBag = _tetrominoBag.OrderBy(x => rng.Next()).ToArray();
     }
 
+    private void Start()
+    {
+    }
+
     void Update()
     {
+
         //更新棋盤
-        BoardUpdated.Invoke(board, HandlingTetromino);
+        BoardUpdated.Invoke(matrix, HandlingTetromino);
 
         //時間到了就進行重力下落
         if (CheckGravityDrop(Time.deltaTime))
             //移動失敗就進行延遲鎖定計時
-            isDelayLocking = !HandlingTetromino.TryMove(board, Vector2Int.down);
+            isDelayLocking = !HandlingTetromino.TryMove(matrix, Vector2Int.down);
 
         //不需要延遲鎖定就提前結束
         if (isDelayLocking)
@@ -129,18 +130,17 @@ public class Tetris : MonoBehaviour, Intents.ITetrisControlsActions
             lockDelayTimer = lockDelayTimerMax;
             // 置放
             if (TryPlaceTetromino(HandlingTetromino))
-                TetrominoPlaced.Invoke(board, HandlingTetromino);
+                TetrominoPlaced.Invoke(matrix, HandlingTetromino);
             else
-                GameOver.Invoke(board);
+                GameOver.Invoke(matrix);
         }
 
-        int clearLines = CheckClearLines();
-        if (clearLines > 0)
+        if (CheckClearLines(out int clearLines))
         {
             LineCleared.Invoke(clearLines);
         }
 
-        BoardUpdated.Invoke(board, HandlingTetromino);
+        BoardUpdated.Invoke(matrix, HandlingTetromino);
     }
 
 
@@ -148,7 +148,7 @@ public class Tetris : MonoBehaviour, Intents.ITetrisControlsActions
     private bool TryPlaceTetromino(Tetromino tetromino)
     {
         //判斷是否可以放在該處
-        if (tetromino.IsLegal(board, tetromino.Position))
+        if (tetromino.IsLegal(matrix, tetromino.Position))
         {
             //設定數值
             for (int y = 0; y < tetromino.Shape.GetLength(0); y++)
@@ -157,7 +157,7 @@ public class Tetris : MonoBehaviour, Intents.ITetrisControlsActions
                 {
                     if (tetromino.Shape[y, x] != 0)
                     {
-                        board[tetromino.Position.y + y][tetromino.Position.x + x] = tetromino.Shape[y, x];
+                        matrix[tetromino.Position.y + y][tetromino.Position.x + x] = tetromino.Shape[y, x];
                     }
                 }
             }
@@ -168,32 +168,32 @@ public class Tetris : MonoBehaviour, Intents.ITetrisControlsActions
 
     private bool CheckGravityDrop(float deltaTime)
     {
-        gravityCounter += deltaTime;
-        if (gravityCounter < gravityPeriod) return false;
-        gravityCounter = 0;
+        gravityTimer += deltaTime;
+        if (gravityTimer < gravityPeriod) return false;
+        gravityTimer = 0;
         return true;
     }
 
     //清行
-    private int CheckClearLines()
+    private bool CheckClearLines(out int clearLines)
     {
-        int clearLines = 0;
+        clearLines = 0;
         //從最上方往下掃
-        for (int y = board.Length - 1; y >= 0; y--)
+        for (int y = matrix.Length - 1; y >= 0; y--)
         {
             //某一行非0
-            if (board[y].All(cell => cell != 0))
+            if (matrix[y].All(cell => cell != 0))
             {
                 //該行以上全部往下移動一行
-                for (int i = y; i < board.Length - 1; i++)
+                for (int i = y; i < matrix.Length - 1; i++)
                 {
-                    board[i] = (int[])board[i + 1].Clone();
+                    matrix[i] = (int[])matrix[i + 1].Clone();
                 }
-                board[^1] = new int[size.x];
+                matrix[^1] = new int[size.x];
                 clearLines++;
             }
         }
-        return clearLines;
+        return clearLines > 0;
     }
 
     private Tetromino GetNextTetromino()
@@ -204,7 +204,7 @@ public class Tetris : MonoBehaviour, Intents.ITetrisControlsActions
         }
         Tetromino nextTetromino = _tetrominoBag.Last();
         _tetrominoBag = _tetrominoBag.Take(_tetrominoBag.Length - 1).ToArray();
-        nextTetromino.Position = new Vector2Int(board[0].Length / 2 - 1, board.Length - 3);
+        nextTetromino.Position = new Vector2Int(matrix[0].Length / 2 - 1, matrix.Length - 3);
         return nextTetromino;
     }
 
@@ -213,8 +213,8 @@ public class Tetris : MonoBehaviour, Intents.ITetrisControlsActions
         if (context.phase != InputActionPhase.Performed)
             return;
         float axis = context.ReadValue<float>();
-        if (axis > 0) HandlingTetromino.TryMove(board, Vector2Int.right);
-        else if (axis < 0) HandlingTetromino.TryMove(board, Vector2Int.left);
+        if (axis > 0) HandlingTetromino.TryMove(matrix, Vector2Int.right);
+        else if (axis < 0) HandlingTetromino.TryMove(matrix, Vector2Int.left);
         else return;
     }
 
@@ -223,8 +223,8 @@ public class Tetris : MonoBehaviour, Intents.ITetrisControlsActions
         if (context.phase != InputActionPhase.Performed)
             return;
         float axis = context.ReadValue<float>();
-        if (axis > 0) HandlingTetromino.TryRotate(board, true);
-        else if (axis < 0) HandlingTetromino.TryRotate(board, false);
+        if (axis > 0) HandlingTetromino.TryRotate(matrix, true);
+        else if (axis < 0) HandlingTetromino.TryRotate(matrix, false);
         else return;
     }
 
@@ -235,11 +235,11 @@ public class Tetris : MonoBehaviour, Intents.ITetrisControlsActions
 
     public void OnHardDrop(InputAction.CallbackContext context)
     {
-        HandlingTetromino.HardDrop(board);
+        HandlingTetromino.HardDrop(matrix);
     }
 
     public void OnSoftDrop(InputAction.CallbackContext context)
     {
-        HandlingTetromino.TryMove(board, Vector2Int.down);
+        HandlingTetromino.TryMove(matrix, Vector2Int.down);
     }
 }

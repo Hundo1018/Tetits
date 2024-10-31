@@ -26,22 +26,22 @@ public class Tetromino
     /// <summary>
     /// 嘗試旋轉, 成功則回傳True, 失敗回傳False
     /// </summary>
-    /// <param name="board">棋盤</param>
+    /// <param name="matrix">棋盤</param>
     /// <param name="clockwise">True -> 順時針旋轉, False 逆時針旋轉</param>
     /// <returns></returns>
-    public bool TryRotate(in int[][] board, bool clockwise)
+    public bool TryRotate(in int[][] matrix, bool clockwise)
     {
         //複製一個暫時性的方塊用來測試旋轉是否合法
         Tetromino nextShape = new Tetromino(Shape);
         nextShape.Shape = Rotate(nextShape.Shape, clockwise);
 
-        if (nextShape.IsLegal(board, Position))
+        if (nextShape.IsLegal(matrix, Position))
         {
             Shape = nextShape.Shape;
             return true;
         }
         //TODO: 待驗證
-        else if (WallKick(board, nextShape.Shape))
+        else if (WallKick(matrix, nextShape.Shape))
         {
             return true;
         }
@@ -51,13 +51,13 @@ public class Tetromino
     /// <summary>
     /// 嘗試移動, 如果有移動成功回傳True
     /// </summary>
-    /// <param name="board"></param>
+    /// <param name="matrix"></param>
     /// <param name="vec"></param>
     /// <returns></returns>
-    public bool TryMove(in int[][] board, Vector2Int vec)
+    public bool TryMove(in int[][] matrix, Vector2Int vec)
     {
         Vector2Int nextPosition = Position + vec;
-        if (IsLegal(board, nextPosition))
+        if (IsLegal(matrix, nextPosition))
         {
             Position = nextPosition;
             return true;
@@ -68,12 +68,12 @@ public class Tetromino
     /// <summary>
     /// 旋轉並回傳新的矩陣
     /// </summary>
-    /// <param name="matrix">傳入矩陣</param>
+    /// <param name="shape">傳入形狀矩陣</param>
     /// <param name="clockwise">T -> 順時針, F -> 逆時針</param>
     /// <returns></returns>
-    private int[,] Rotate(int[,] matrix, bool clockwise)
+    private int[,] Rotate(int[,] shape, bool clockwise)
     {
-        int[,] newMatrix = (int[,])matrix.Clone();
+        int[,] newMatrix = (int[,])shape.Clone();
         int n = newMatrix.GetLength(0);
         for (int i = 0; i < n / 2; i++)
         {
