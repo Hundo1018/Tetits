@@ -249,6 +249,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 263154420}
+  - component: {fileID: 263154421}
   m_Layer: 0
   m_Name: NextQueue
   m_TagString: Untagged
@@ -271,6 +272,20 @@ Transform:
   m_Children: []
   m_Father: {fileID: 494674628}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &263154421
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 263154419}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b0d137649c1ac4a4082e87bbe9c32dca, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  model: {fileID: 657801618}
+  NextQueueStr: []
 --- !u!1 &494674626
 GameObject:
   m_ObjectHideFlags: 0

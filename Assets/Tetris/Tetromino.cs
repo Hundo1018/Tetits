@@ -4,9 +4,11 @@ public class Tetromino
 {
     public int[,] Shape;
     public Vector2Int Position = Vector2Int.zero;
+    public string Alias = "";
 
-    public Tetromino(int[,] shape)
+    public Tetromino(int[,] shape, string Alias = "")
     {
+        this.Alias = Alias;
         Shape = new int[shape.GetLength(0), shape.GetLength(1)];
         for (int i = 0; i < shape.GetLength(0); i++)
         {
@@ -20,6 +22,7 @@ public class Tetromino
     public Tetromino(Tetromino clone) : this(clone.Shape)
     {
         Position = new Vector2Int(clone.Position.x, clone.Position.y);
+        Alias = clone.Alias;
     }
 
 

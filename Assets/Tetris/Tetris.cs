@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -28,7 +29,7 @@ public class Tetris : MonoBehaviour, Intents.ITetrisControlsActions
     /// </summary>
     public int[][] matrix = new int[20][];
 
-    private Tetromino[] _tetrominoBag = new Tetromino[7];
+    public Queue<Tetromino> NextQueue = new Queue<Tetromino>();
 
     public Tetromino HandlingTetromino;
 
@@ -57,52 +58,61 @@ public class Tetris : MonoBehaviour, Intents.ITetrisControlsActions
             HandlingTetromino = GetNextTetromino();
         };
 
-        ShuffleBag();
+        GetShuffledBag().ForEach(x => NextQueue.Enqueue(x));
         HandlingTetromino = GetNextTetromino();
     }
 
-    private void ShuffleBag()
+    private List<Tetromino> GetShuffledBag()
     {
         Tetromino T = new(new int[,] {
             {0, 1, 0},
             {1, 1, 1},
             {0, 0, 0},
-        });
+        },"T");
         Tetromino I = new(new int[,] {
             {0, 0, 0, 0},
             {1, 1, 1, 1},
             {0, 0, 0, 0},
             {0, 0, 0, 0},
-        });
+        },"I");
         Tetromino O = new(new int[,] {
             {1, 1},
             {1, 1},
-        });
+        },"O");
         Tetromino L = new(new int[,] {
             {0, 0, 0},
             {1, 1, 1},
             {1, 0, 0},
-        });
+        },"L");
         Tetromino J = new(new int[,] {
             {0, 0, 0},
             {1, 1, 1},
             {0, 0, 1},
-        });
+        },"J");
         Tetromino S = new(new int[,] {
             {0, 0, 0},
             {0, 1, 1},
             {1, 1, 0},
-        });
+        },"S");
         Tetromino Z = new(new int[,] {
             {0, 0, 0},
             {1, 1, 0},
             {0, 1, 1},
-        });
-        _tetrominoBag = new Tetromino[] { T, I, O, L, J, S, Z };
+        },"Z");
+        Tetromino[] tetrominoBag = new Tetromino[] { T, I, O, L, J, S, Z };
         System.Random rng = new();
-        _tetrominoBag = _tetrominoBag.OrderBy(x => rng.Next()).ToArray();
+        return tetrominoBag.OrderBy(x => rng.Next()).ToList();
     }
-
+    private Tetromino GetNextTetromino()
+    {
+        if (NextQueue.Count <= 7)
+        {
+            GetShuffledBag().ForEach(x => NextQueue.Enqueue(x));
+        }
+        Tetromino nextTetromino = NextQueue.Dequeue();
+        nextTetromino.Position = new Vector2Int(matrix[0].Length / 2 - 1, matrix.Length - 3);
+        return nextTetromino;
+    }
     private void Start()
     {
     }
@@ -196,17 +206,7 @@ public class Tetris : MonoBehaviour, Intents.ITetrisControlsActions
         return clearLines > 0;
     }
 
-    private Tetromino GetNextTetromino()
-    {
-        if (_tetrominoBag.Length == 0)
-        {
-            ShuffleBag();
-        }
-        Tetromino nextTetromino = _tetrominoBag.Last();
-        _tetrominoBag = _tetrominoBag.Take(_tetrominoBag.Length - 1).ToArray();
-        nextTetromino.Position = new Vector2Int(matrix[0].Length / 2 - 1, matrix.Length - 3);
-        return nextTetromino;
-    }
+
 
     public void OnMove(InputAction.CallbackContext context)
     {
