@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class TetrisView : MonoBehaviour
@@ -7,15 +8,20 @@ public class TetrisView : MonoBehaviour
     public Tetris model;
     public int previewOpacity = 127;
     public float sizeWidth = 5.12f;
-    private GameObject[][] viewBoard;
+    public List<TShape> NextQueueStr = new List<TShape>();
+    public List<GameObject> NextQueueView = new List<GameObject>();
+    
+    
+    private Queue<Tetromino> _nextQueue = new Queue<Tetromino>();
 
+    private GameObject[][] viewBoard;
+    
     void Start()
     {
         model.BoardUpdated += OnBoardUpdate;
+        _nextQueue = model.NextQueue;
         InitializeViewBoard();
     }
-
-
 
     void InitializeViewBoard()
     {
@@ -41,6 +47,12 @@ public class TetrisView : MonoBehaviour
     void Update()
     {
         // 若有需要每幀更新的內容，可以在這裡添加
+        NextQueueStr = new List<TShape>();
+        foreach (var item in _nextQueue)
+        {
+            NextQueueStr.Add(item.Alias);
+            //TODO: relate to prefab
+        }
     }
 
     void OnBoardUpdate(int[][] board, Tetromino handlingTetromino)

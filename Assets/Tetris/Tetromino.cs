@@ -1,12 +1,24 @@
 using UnityEngine;
 
+public enum TShape
+{
+    NONE,
+    I,
+    O,
+    L,
+    S,
+    Z,
+    J,
+    T,
+}
+
 public class Tetromino
 {
     public int[,] Shape;
     public Vector2Int Position = Vector2Int.zero;
-    public string Alias = "";
-
-    public Tetromino(int[,] shape, string Alias = "")
+    public TShape Alias = TShape.NONE;
+    //TODO: Create a relation to Prefab
+    public Tetromino(int[,] shape, TShape Alias = TShape.NONE)
     {
         this.Alias = Alias;
         Shape = new int[shape.GetLength(0), shape.GetLength(1)];

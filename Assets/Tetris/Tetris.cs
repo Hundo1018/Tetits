@@ -12,6 +12,7 @@ public class Tetris : MonoBehaviour, Intents.ITetrisControlsActions
     public event Action<int> LineCleared = delegate { };
     public event Action<int[][], Tetromino> TetrominoPlaced = delegate { };
     public event Action<int[][]> GameOver = delegate { };
+
     // public event Action<int> T = delegate { };
     private Intents _controls;
 
@@ -68,37 +69,37 @@ public class Tetris : MonoBehaviour, Intents.ITetrisControlsActions
             {0, 1, 0},
             {1, 1, 1},
             {0, 0, 0},
-        },"T");
+        },TShape.T);
         Tetromino I = new(new int[,] {
             {0, 0, 0, 0},
             {1, 1, 1, 1},
             {0, 0, 0, 0},
             {0, 0, 0, 0},
-        },"I");
+        },TShape.I);
         Tetromino O = new(new int[,] {
             {1, 1},
             {1, 1},
-        },"O");
+        },TShape.O);
         Tetromino L = new(new int[,] {
             {0, 0, 0},
             {1, 1, 1},
             {1, 0, 0},
-        },"L");
+        },TShape.L);
         Tetromino J = new(new int[,] {
             {0, 0, 0},
             {1, 1, 1},
             {0, 0, 1},
-        },"J");
+        },TShape.J);
         Tetromino S = new(new int[,] {
             {0, 0, 0},
             {0, 1, 1},
             {1, 1, 0},
-        },"S");
+        },TShape.S);
         Tetromino Z = new(new int[,] {
             {0, 0, 0},
             {1, 1, 0},
             {0, 1, 1},
-        },"Z");
+        },TShape.Z);
         Tetromino[] tetrominoBag = new Tetromino[] { T, I, O, L, J, S, Z };
         System.Random rng = new();
         return tetrominoBag.OrderBy(x => rng.Next()).ToList();
