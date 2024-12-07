@@ -489,6 +489,7 @@ MonoBehaviour:
   - {fileID: 1735155532}
   - {fileID: 1331447176}
   - {fileID: 154674635}
+  previewScale: 0.25
 --- !u!4 &494674628
 Transform:
   m_ObjectHideFlags: 0
@@ -679,6 +680,13 @@ MonoBehaviour:
   gravityPeriod: 1
   gravityTimer: 0
   size: {x: 10, y: 20}
+  PrefabT: {fileID: 8692600197451540986, guid: d298aeb112464bd4b8660462ad34ca23, type: 3}
+  PrefabI: {fileID: 8692600197451540986, guid: 5bb2ef0880a3c1948831b64373d2b4f2, type: 3}
+  PrefabO: {fileID: 8692600197451540986, guid: fe880bc276d268646b31f82755adaeda, type: 3}
+  PrefabL: {fileID: 8692600197451540986, guid: 189449618ff1d3345a7d8022e0b9f267, type: 3}
+  PrefabJ: {fileID: 8692600197451540986, guid: 620e277db8325e5428622b5cd21e182d, type: 3}
+  PrefabS: {fileID: 8692600197451540986, guid: a453b59f6c7f0a1458557377bc339f17, type: 3}
+  PrefabZ: {fileID: 8692600197451540986, guid: 2ec7c58e2a9473b4da9d9101837eebec, type: 3}
 --- !u!4 &657801619
 Transform:
   m_ObjectHideFlags: 0

@@ -13,7 +13,7 @@ public class Tetris : MonoBehaviour, Intents.ITetrisControlsActions
     public event Action<int[][], Tetromino> TetrominoPlaced = delegate { };
     public event Action<int[][]> GameOver = delegate { };
 
-    // public event Action<int> T = delegate { };
+    public event Action<List<Tetromino>> NextQueueUpdated = delegate { };
     private Intents _controls;
 
     public float lockDelayTimerMax = 1f;
@@ -24,13 +24,28 @@ public class Tetris : MonoBehaviour, Intents.ITetrisControlsActions
     public float gravityTimer = 0f;
 
     public Vector2Int size = new(10, 20);
-
+    # region Tetrominos
+    public GameObject PrefabT;
+    Tetromino ShapeT;
+    public GameObject PrefabI;
+    Tetromino ShapeI;
+    public GameObject PrefabO;
+    Tetromino ShapeO;
+    public GameObject PrefabL;
+    Tetromino ShapeL;
+    public GameObject PrefabJ;
+    Tetromino ShapeJ;
+    public GameObject PrefabS;
+    Tetromino ShapeS;
+    public GameObject PrefabZ;
+    Tetromino ShapeZ;
+    #endregion
     /// <summary>
     /// 棋盤只放已固定的形狀
     /// </summary>
     public int[][] matrix = new int[20][];
 
-    public Queue<Tetromino> NextQueue = new Queue<Tetromino>();
+    public Queue<Tetromino> NextQueue = new();
 
     public Tetromino HandlingTetromino;
 
@@ -46,6 +61,41 @@ public class Tetris : MonoBehaviour, Intents.ITetrisControlsActions
 
     void Awake()
     {
+        ShapeT = new(new int[,] {
+            {0, 1, 0},
+            {1, 1, 1},
+            {0, 0, 0},
+        }, PrefabT, TShape.T);
+        ShapeI = new(new int[,] {
+            {0, 0, 0, 0},
+            {1, 1, 1, 1},
+            {0, 0, 0, 0},
+            {0, 0, 0, 0},
+        }, PrefabI, TShape.I);
+        ShapeO = new(new int[,] {
+            {1, 1},
+            {1, 1},
+        }, PrefabO, TShape.O);
+        ShapeL = new(new int[,] {
+            {0, 0, 0},
+            {1, 1, 1},
+            {1, 0, 0},
+        }, PrefabL, TShape.L);
+        ShapeJ = new(new int[,] {
+            {0, 0, 0},
+            {1, 1, 1},
+            {0, 0, 1},
+        }, PrefabJ, TShape.J);
+        ShapeS = new(new int[,] {
+            {0, 0, 0},
+            {0, 1, 1},
+            {1, 1, 0},
+        }, PrefabS, TShape.S);
+        ShapeZ = new(new int[,] {
+            {0, 0, 0},
+            {1, 1, 0},
+            {0, 1, 1},
+        }, PrefabZ, TShape.Z);
         _controls = new Intents();
         _controls.TetrisControls.SetCallbacks(this);
         lockDelayTimer = lockDelayTimerMax;
@@ -62,45 +112,11 @@ public class Tetris : MonoBehaviour, Intents.ITetrisControlsActions
         GetShuffledBag().ForEach(x => NextQueue.Enqueue(x));
         HandlingTetromino = GetNextTetromino();
     }
-
+    
     private List<Tetromino> GetShuffledBag()
     {
-        Tetromino T = new(new int[,] {
-            {0, 1, 0},
-            {1, 1, 1},
-            {0, 0, 0},
-        },TShape.T);
-        Tetromino I = new(new int[,] {
-            {0, 0, 0, 0},
-            {1, 1, 1, 1},
-            {0, 0, 0, 0},
-            {0, 0, 0, 0},
-        },TShape.I);
-        Tetromino O = new(new int[,] {
-            {1, 1},
-            {1, 1},
-        },TShape.O);
-        Tetromino L = new(new int[,] {
-            {0, 0, 0},
-            {1, 1, 1},
-            {1, 0, 0},
-        },TShape.L);
-        Tetromino J = new(new int[,] {
-            {0, 0, 0},
-            {1, 1, 1},
-            {0, 0, 1},
-        },TShape.J);
-        Tetromino S = new(new int[,] {
-            {0, 0, 0},
-            {0, 1, 1},
-            {1, 1, 0},
-        },TShape.S);
-        Tetromino Z = new(new int[,] {
-            {0, 0, 0},
-            {1, 1, 0},
-            {0, 1, 1},
-        },TShape.Z);
-        Tetromino[] tetrominoBag = new Tetromino[] { T, I, O, L, J, S, Z };
+
+        Tetromino[] tetrominoBag = new Tetromino[] { ShapeT, ShapeI, ShapeO, ShapeL, ShapeJ, ShapeS, ShapeZ };
         System.Random rng = new();
         return tetrominoBag.OrderBy(x => rng.Next()).ToList();
     }
@@ -112,6 +128,7 @@ public class Tetris : MonoBehaviour, Intents.ITetrisControlsActions
         }
         Tetromino nextTetromino = NextQueue.Dequeue();
         nextTetromino.Position = new Vector2Int(matrix[0].Length / 2 - 1, matrix.Length - 3);
+        NextQueueUpdated.Invoke(NextQueue.ToList());
         return nextTetromino;
     }
     private void Start()

@@ -10,17 +10,32 @@ public class TetrisView : MonoBehaviour
     public float sizeWidth = 5.12f;
     public List<TShape> NextQueueStr = new List<TShape>();
     public List<GameObject> NextQueueView = new List<GameObject>();
-    
-    
-    private Queue<Tetromino> _nextQueue = new Queue<Tetromino>();
 
+    private Queue<Tetromino> _nextQueue = new Queue<Tetromino>();
     private GameObject[][] viewBoard;
-    
-    void Start()
+    [SerializeField] private float previewScale;
+    private void Awake()
     {
         model.BoardUpdated += OnBoardUpdate;
+        model.NextQueueUpdated += OnNextQueueUpdate;
+
+    }
+    void Start()
+    {
         _nextQueue = model.NextQueue;
         InitializeViewBoard();
+    }
+
+    private void OnNextQueueUpdate(List<Tetromino> tetrominos)
+    {
+        for (int i = 0; i < NextQueueView.Count; i++)
+        {
+            if (NextQueueView[i].transform.childCount > 0)
+                Destroy(NextQueueView[i].transform.GetChild(0).gameObject);
+            GameObject temp = Instantiate(tetrominos[i].gameObject, NextQueueView[i].transform);
+            temp.transform.localScale = temp.transform.localScale * previewScale;
+            temp.transform.SetParent(NextQueueView[i].transform);
+        }
     }
 
     void InitializeViewBoard()
@@ -47,12 +62,7 @@ public class TetrisView : MonoBehaviour
     void Update()
     {
         // 若有需要每幀更新的內容，可以在這裡添加
-        NextQueueStr = new List<TShape>();
-        foreach (var item in _nextQueue)
-        {
-            NextQueueStr.Add(item.Alias);
-            //TODO: relate to prefab
-        }
+
     }
 
     void OnBoardUpdate(int[][] board, Tetromino handlingTetromino)
@@ -124,6 +134,7 @@ public class TetrisView : MonoBehaviour
 
     void OnDestroy()
     {
+        model.NextQueueUpdated -= OnNextQueueUpdate;
         model.BoardUpdated -= OnBoardUpdate;
     }
 }

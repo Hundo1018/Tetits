@@ -17,9 +17,10 @@ public class Tetromino
     public int[,] Shape;
     public Vector2Int Position = Vector2Int.zero;
     public TShape Alias = TShape.NONE;
-    //TODO: Create a relation to Prefab
-    public Tetromino(int[,] shape, TShape Alias = TShape.NONE)
+    public GameObject gameObject;
+    public Tetromino(int[,] shape, GameObject gameObject, TShape Alias = TShape.NONE)
     {
+        this.gameObject = gameObject;
         this.Alias = Alias;
         Shape = new int[shape.GetLength(0), shape.GetLength(1)];
         for (int i = 0; i < shape.GetLength(0); i++)
@@ -31,7 +32,7 @@ public class Tetromino
         }
     }
 
-    public Tetromino(Tetromino clone) : this(clone.Shape)
+    public Tetromino(Tetromino clone) : this(clone.Shape, clone.gameObject)
     {
         Position = new Vector2Int(clone.Position.x, clone.Position.y);
         Alias = clone.Alias;
@@ -47,7 +48,7 @@ public class Tetromino
     public bool TryRotate(in int[][] matrix, bool clockwise)
     {
         //複製一個暫時性的方塊用來測試旋轉是否合法
-        Tetromino nextShape = new Tetromino(Shape);
+        Tetromino nextShape = new(Shape, gameObject);
         nextShape.Shape = Rotate(nextShape.Shape, clockwise);
 
         if (nextShape.IsLegal(matrix, Position))
@@ -136,14 +137,14 @@ public class Tetromino
     private bool WallKick(in int[][] board, int[,] nextShape)
     {
         Vector2Int[] wallKickTests = {
-            new Vector2Int(-1, 0),
-            new Vector2Int(1, 0),
-            new Vector2Int(0, -1),
-            new Vector2Int(0, 1),
-            new Vector2Int(-1, -1),
-            new Vector2Int(1, -1),
-            new Vector2Int(-1, 1),
-            new Vector2Int(1, 1)
+            new(-1, 0),
+            new(1, 0),
+            new(0, -1),
+            new(0, 1),
+            new(-1, -1),
+            new(1, -1),
+            new(-1, 1),
+            new(1, 1)
         };
 
         foreach (var test in wallKickTests)
