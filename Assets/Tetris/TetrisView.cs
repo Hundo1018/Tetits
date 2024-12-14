@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class TetrisView : MonoBehaviour
 {
@@ -10,16 +11,43 @@ public class TetrisView : MonoBehaviour
     public float sizeWidth = 5.12f;
     public List<TShape> NextQueueStr = new List<TShape>();
     public List<GameObject> NextQueueView = new List<GameObject>();
-
+    public Image LockDelayTimerBar;
     private Queue<Tetromino> _nextQueue = new Queue<Tetromino>();
     private GameObject[][] viewBoard;
     [SerializeField] private float previewScale;
     private void Awake()
     {
         model.BoardUpdated += OnBoardUpdate;
+        model.BoardUpdated += OnHandlingTetrominoUpdate;
         model.NextQueueUpdated += OnNextQueueUpdate;
+        model.LockDelayUpdated += OnLockDelayTimerUpdate;
 
     }
+
+    private void OnHandlingTetrominoUpdate(int[][] board, Tetromino tetromino)
+    {
+        //TODO: 計算時避免try-catch結構，以符合超出邊界的狀況
+        try
+        {
+            //將鎖定倒數計時顯示在方塊右上方
+            Vector2Int lockDelayShowIndex = new Vector2Int(tetromino.Position.x, tetromino.Position.y);
+            lockDelayShowIndex.y += tetromino.Shape.GetLength(0);
+            lockDelayShowIndex.x += tetromino.Shape.GetLength(1);
+            LockDelayTimerBar.transform.position = Camera.main.WorldToScreenPoint(viewBoard[lockDelayShowIndex.y][lockDelayShowIndex.x].transform.position);
+            
+        }
+        catch (Exception e)
+        {
+            Debug.Log(e);
+        }
+    }
+
+    private void OnLockDelayTimerUpdate(float timeMax, float timeRemain, bool isDelayLocking)
+    {
+        LockDelayTimerBar.fillAmount = timeRemain / timeMax;
+        // LockDelayTimerBar.gameObject.SetActive(isDelayLocking);
+    }
+
     void Start()
     {
         _nextQueue = model.NextQueue;
@@ -32,7 +60,8 @@ public class TetrisView : MonoBehaviour
         {
             if (NextQueueView[i].transform.childCount > 0)
                 Destroy(NextQueueView[i].transform.GetChild(0).gameObject);
-            GameObject temp = Instantiate(tetrominos[i].gameObject, NextQueueView[i].transform);
+            Vector3 newPosition = new Vector3(NextQueueView[i].transform.position.x, NextQueueView[i].transform.position.y, 2);
+            GameObject temp = Instantiate(tetrominos[i].gameObject, newPosition, Quaternion.identity);
             temp.transform.localScale = temp.transform.localScale * previewScale;
             temp.transform.SetParent(NextQueueView[i].transform);
         }

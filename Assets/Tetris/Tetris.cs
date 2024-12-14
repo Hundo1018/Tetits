@@ -12,21 +12,21 @@ public class Tetris : MonoBehaviour, Intents.ITetrisControlsActions
     public event Action<int> LineCleared = delegate { };
     public event Action<int[][], Tetromino> TetrominoPlaced = delegate { };
     public event Action<int[][]> GameOver = delegate { };
-    public event Action<float> LockDelayUpdated = delegate { };
+    public event Action<float,float,bool> LockDelayUpdated = delegate { };
     public event Action<float> GravityUpdated = delegate { };
     public event Action<List<Tetromino>> NextQueueUpdated = delegate { };
     private Intents _controls;
 
     public float lockDelayTimerMax = 1f;
 
-    private float _lockDelayTimer = 0f;
+    [SerializeField] private float _lockDelayTimer = 0f;
     public float LockDelayTimer
     {
         get => _lockDelayTimer;
         set
         {
             _lockDelayTimer = value;
-            LockDelayUpdated.Invoke(_lockDelayTimer);
+            LockDelayUpdated.Invoke(lockDelayTimerMax,_lockDelayTimer,isDelayLocking);
         }
     }
     public bool isDelayLocking = false;
@@ -160,7 +160,7 @@ public class Tetris : MonoBehaviour, Intents.ITetrisControlsActions
     {
 
         //更新棋盤
-        BoardUpdated.Invoke(matrix, HandlingTetromino);
+        // BoardUpdated.Invoke(matrix, HandlingTetromino);
 
         //時間到了就進行重力下落
         if (CheckGravityDrop(Time.deltaTime))
