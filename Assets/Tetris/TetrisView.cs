@@ -34,7 +34,6 @@ public class TetrisView : MonoBehaviour
             lockDelayShowIndex.y += tetromino.Shape.GetLength(0);
             lockDelayShowIndex.x += tetromino.Shape.GetLength(1);
             LockDelayTimerBar.transform.position = Camera.main.WorldToScreenPoint(viewBoard[lockDelayShowIndex.y][lockDelayShowIndex.x].transform.position);
-            
         }
         catch (Exception e)
         {

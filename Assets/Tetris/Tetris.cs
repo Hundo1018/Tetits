@@ -12,7 +12,7 @@ public class Tetris : MonoBehaviour, Intents.ITetrisControlsActions
     public event Action<int> LineCleared = delegate { };
     public event Action<int[][], Tetromino> TetrominoPlaced = delegate { };
     public event Action<int[][]> GameOver = delegate { };
-    public event Action<float,float,bool> LockDelayUpdated = delegate { };
+    public event Action<float, float, bool> LockDelayUpdated = delegate { };
     public event Action<float> GravityUpdated = delegate { };
     public event Action<List<Tetromino>> NextQueueUpdated = delegate { };
     private Intents _controls;
@@ -26,7 +26,7 @@ public class Tetris : MonoBehaviour, Intents.ITetrisControlsActions
         set
         {
             _lockDelayTimer = value;
-            LockDelayUpdated.Invoke(lockDelayTimerMax,_lockDelayTimer,isDelayLocking);
+            LockDelayUpdated.Invoke(lockDelayTimerMax, _lockDelayTimer, isDelayLocking);
         }
     }
     public bool isDelayLocking = false;
@@ -141,6 +141,7 @@ public class Tetris : MonoBehaviour, Intents.ITetrisControlsActions
         System.Random rng = new();
         return tetrominoBag.OrderBy(x => rng.Next()).ToList();
     }
+
     private Tetromino GetNextTetromino()
     {
         if (NextQueue.Count <= 7)
@@ -152,20 +153,11 @@ public class Tetris : MonoBehaviour, Intents.ITetrisControlsActions
         NextQueueUpdated.Invoke(NextQueue.ToList());
         return nextTetromino;
     }
-    private void Start()
+
+    public void CheckDelayLocking()
     {
-    }
-
-    void Update()
-    {
-
-        //更新棋盤
-        // BoardUpdated.Invoke(matrix, HandlingTetromino);
-
-        //時間到了就進行重力下落
-        if (CheckGravityDrop(Time.deltaTime))
-            //移動失敗就進行延遲鎖定計時
-            isDelayLocking = !HandlingTetromino.TryMove(matrix, Vector2Int.down);
+        //如果接下來不能下落, 則開始延遲鎖定計時
+        isDelayLocking = !HandlingTetromino.IsLegal(matrix, HandlingTetromino.Position + Vector2Int.down);
 
         //不需要延遲鎖定就提前結束
         if (isDelayLocking)
@@ -173,7 +165,7 @@ public class Tetris : MonoBehaviour, Intents.ITetrisControlsActions
         else
             LockDelayTimer = lockDelayTimerMax;
 
-        if (isDelayLocking && LockDelayTimer <= 0)
+        if (LockDelayTimer <= 0)
         {
             isDelayLocking = false;
             LockDelayTimer = lockDelayTimerMax;
@@ -183,6 +175,17 @@ public class Tetris : MonoBehaviour, Intents.ITetrisControlsActions
             else
                 GameOver.Invoke(matrix);
         }
+    }
+
+    void Update()
+    {
+        //更新棋盤
+        // BoardUpdated.Invoke(matrix, HandlingTetromino);
+
+        //時間到了就進行重力下落
+        if (CheckGravityDrop(Time.deltaTime))
+            HandlingTetromino.TryMove(matrix, Vector2Int.down);
+        CheckDelayLocking();
 
         if (CheckClearLines(out int clearLines))
         {
