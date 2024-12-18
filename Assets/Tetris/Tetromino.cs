@@ -14,20 +14,21 @@ public enum TShape
 
 public class Tetromino
 {
-    public int[,] Shape;
+    public int[][] Shape;
     public Vector2Int Position = Vector2Int.zero;
     public TShape Alias = TShape.NONE;
     public GameObject gameObject;
-    public Tetromino(int[,] shape, GameObject gameObject, TShape Alias = TShape.NONE)
+    public Tetromino(int[][] shape, GameObject gameObject, TShape Alias = TShape.NONE)
     {
         this.gameObject = gameObject;
         this.Alias = Alias;
-        Shape = new int[shape.GetLength(0), shape.GetLength(1)];
-        for (int i = 0; i < shape.GetLength(0); i++)
+        Shape = new int[shape.Length][];
+        for (int i = 0; i < shape.Length; i++)
         {
-            for (int j = 0; j < shape.GetLength(1); j++)
+            Shape[i] = new int[shape[0].Length];
+            for (int j = 0; j < shape[0].Length; j++)
             {
-                Shape[i, j] = shape[i, j];
+                Shape[i][j] = shape[i][j];
             }
         }
     }
@@ -37,7 +38,6 @@ public class Tetromino
         Position = new Vector2Int(clone.Position.x, clone.Position.y);
         Alias = clone.Alias;
     }
-
 
     /// <summary>
     /// 嘗試旋轉, 成功則回傳True, 失敗回傳False
@@ -87,9 +87,9 @@ public class Tetromino
     /// <param name="shape">傳入形狀矩陣</param>
     /// <param name="clockwise">T -> 順時針, F -> 逆時針</param>
     /// <returns></returns>
-    private int[,] Rotate(int[,] shape, bool clockwise)
+    private int[][] Rotate(int[][] shape, bool clockwise)
     {
-        int[,] newMatrix = (int[,])shape.Clone();
+        int[][] newMatrix = (int[][])shape.Clone();
         int n = newMatrix.GetLength(0);
         for (int i = 0; i < n / 2; i++)
         {
@@ -97,19 +97,19 @@ public class Tetromino
             {
                 if (clockwise)
                 {
-                    int temp = newMatrix[i, j];
-                    newMatrix[i, j] = newMatrix[n - j - 1, i];
-                    newMatrix[n - j - 1, i] = newMatrix[n - i - 1, n - j - 1];
-                    newMatrix[n - i - 1, n - j - 1] = newMatrix[j, n - i - 1];
-                    newMatrix[j, n - i - 1] = temp;
+                    int temp = newMatrix[i][j];
+                    newMatrix[i][j] = newMatrix[n - j - 1][i];
+                    newMatrix[n - j - 1][i] = newMatrix[n - i - 1][n - j - 1];
+                    newMatrix[n - i - 1][n - j - 1] = newMatrix[j][n - i - 1];
+                    newMatrix[j][n - i - 1] = temp;
                 }
                 else
                 {
-                    int temp = newMatrix[i, j];
-                    newMatrix[i, j] = newMatrix[j, n - i - 1];
-                    newMatrix[j, n - i - 1] = newMatrix[n - i - 1, n - j - 1];
-                    newMatrix[n - i - 1, n - j - 1] = newMatrix[n - j - 1, i];
-                    newMatrix[n - j - 1, i] = temp;
+                    int temp = newMatrix[i][j];
+                    newMatrix[i][j] = newMatrix[j][n - i - 1];
+                    newMatrix[j][n - i - 1] = newMatrix[n - i - 1][n - j - 1];
+                    newMatrix[n - i - 1][n - j - 1] = newMatrix[n - j - 1][i];
+                    newMatrix[n - j - 1][i] = temp;
                 }
             }
         }
@@ -119,10 +119,10 @@ public class Tetromino
     /// <summary>
     /// 快速下落
     /// </summary>
-    /// <param name="board"></param>
-    public void HardDrop(in int[][] board)
+    /// <param name="matrix"></param>
+    public void HardDrop(in int[][] matrix)
     {
-        while (IsLegal(board, Position + Vector2Int.down))
+        while (IsLegal(matrix, Position + Vector2Int.down))
         {
             Position += Vector2Int.down;
         }
@@ -131,10 +131,10 @@ public class Tetromino
     /// <summary>
     /// 牆踢(直接編輯)
     /// </summary>
-    /// <param name="board"></param>
+    /// <param name="matrix"></param>
     /// <param name="nextShape">形狀</param>
     /// <returns>成功與否</returns>
-    private bool WallKick(in int[][] board, int[,] nextShape)
+    private bool WallKick(in int[][] matrix, int[][] nextShape)
     {
         Vector2Int[] wallKickTests = {
             new(-1, 0),
@@ -149,7 +149,7 @@ public class Tetromino
 
         foreach (var test in wallKickTests)
         {
-            if (IsLegal(board, Position + test))
+            if (IsLegal(matrix, Position + test))
             {
                 Shape = nextShape;
                 Position += test;
@@ -162,22 +162,22 @@ public class Tetromino
     /// <summary>
     /// 判斷這個方塊是否可以放在特定位置
     /// </summary>
-    /// <param name="board"></param>
+    /// <param name="matrix"></param>
     /// <param name="position"></param>
     /// <returns></returns>
-    public bool IsLegal(in int[][] board, Vector2Int position)
+    public bool IsLegal(in int[][] matrix, Vector2Int position)
     {
-        for (int y = 0; y < Shape.GetLength(0); y++)
+        for (int y = 0; y < Shape.Length; y++)
         {
-            for (int x = 0; x < Shape.GetLength(1); x++)
+            for (int x = 0; x < Shape[0].Length; x++)
             {
-                if (Shape[y, x] != 0)
+                if (Shape[y][x] != 0)
                 {
-                    int boardX = position.x + x;
-                    int boardY = position.y + y;
-                    if (boardX < 0 || boardX >= board[0].Length
-                     || boardY < 0 || boardY >= board.Length
-                     || board[boardY][boardX] != 0)
+                    int matrixX = position.x + x;
+                    int matrixY = position.y + y;
+                    if (matrixX < 0 || matrixX >= matrix[0].Length
+                     || matrixY < 0 || matrixY >= matrix.Length
+                     || matrix[matrixY][matrixX] != 0)
                     {
                         return false;
                     }

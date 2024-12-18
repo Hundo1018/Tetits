@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -26,19 +27,8 @@ public class TetrisView : MonoBehaviour
 
     private void OnHandlingTetrominoUpdate(int[][] board, Tetromino tetromino)
     {
-        //TODO: 計算時避免try-catch結構，以符合超出邊界的狀況
-        try
-        {
-            //將鎖定倒數計時顯示在方塊右上方
-            Vector2Int lockDelayShowIndex = new Vector2Int(tetromino.Position.x, tetromino.Position.y);
-            lockDelayShowIndex.y += tetromino.Shape.GetLength(0);
-            lockDelayShowIndex.x += tetromino.Shape.GetLength(1);
-            LockDelayTimerBar.transform.position = Camera.main.WorldToScreenPoint(viewBoard[lockDelayShowIndex.y][lockDelayShowIndex.x].transform.position);
-        }
-        catch (Exception e)
-        {
-            Debug.Log(e);
-        }
+        Vector2Int lockDelayShowIndex = new Vector2Int(tetromino.Position.x + 1, tetromino.Position.y + 1);
+        LockDelayTimerBar.transform.position = Camera.main.WorldToScreenPoint(viewBoard[lockDelayShowIndex.y][lockDelayShowIndex.x].transform.position);
     }
 
     private void OnLockDelayTimerUpdate(float timeMax, float timeRemain, bool isDelayLocking)
@@ -90,11 +80,11 @@ public class TetrisView : MonoBehaviour
     void Update()
     {
         // 若有需要每幀更新的內容，可以在這裡添加
-
     }
 
     void OnBoardUpdate(int[][] board, Tetromino handlingTetromino)
     {
+
         int[][] previewBoardArr = PreviewBoard(board, handlingTetromino);
         for (int y = 0; y < previewBoardArr.Length; y++)
         {
@@ -117,47 +107,46 @@ public class TetrisView : MonoBehaviour
 
     int[][] PreviewBoard(int[][] board, Tetromino handlingTetromino)
     {
-        int[][] previewBoard = new int[board.Length][];
+        // var flipTetromino = new Tetromino(handlingTetromino);
+        // int len = flipTetromino.Shape.Length - 1;
+        // int halfLen = len / 2;
+        // for (int i = 0; i <= halfLen; i++)
+        // {
+        //     (flipTetromino.Shape[len - i], flipTetromino.Shape[i]) = (flipTetromino.Shape[i], flipTetromino.Shape[len - i]);
+        // }
+        // handlingTetromino = flipTetromino;
+        var newBoard = ProjectOnBoard(board, handlingTetromino, false);
+
+        Tetromino dropPreviewTetromino = new(handlingTetromino);
+
+        dropPreviewTetromino.HardDrop(board);
+        return ProjectOnBoard(newBoard, dropPreviewTetromino, true);
+    }
+
+    private int[][] ProjectOnBoard(int[][] board, Tetromino tetromino, bool isPreview)
+    {
+        int[][] projected = new int[board.Length][];
         for (int i = 0; i < board.Length; i++)
         {
-            previewBoard[i] = new int[board[i].Length];
-            Array.Copy(board[i], previewBoard[i], board[i].Length);
+            projected[i] = new int[board[i].Length];
+            Array.Copy(board[i], projected[i], board[i].Length);
         }
-        for (int y = 0; y < handlingTetromino.Shape.GetLength(0); y++)
+        for (int y = 0; y < tetromino.Shape.Length; y++)
         {
-            for (int x = 0; x < handlingTetromino.Shape.GetLength(1); x++)
+            for (int x = 0; x < tetromino.Shape[0].Length; x++)
             {
-                if (handlingTetromino.Shape[y, x] != 0)
-                {
-                    int nx = handlingTetromino.Position.x + x;
-                    int ny = handlingTetromino.Position.y + y;
-                    if (nx < 0 || nx >= previewBoard[0].Length) continue;
-                    if (ny < 0 || ny >= previewBoard.Length) continue;
-                    previewBoard[ny][nx] = handlingTetromino.Shape[y, x];
-                }
+                if (tetromino.Shape[y][x] == 0) continue;
+                int previewX = tetromino.Position.x + x;
+                int previewY = tetromino.Position.y + y;
+                if (previewX < 0 || previewX >= projected[0].Length) continue;
+                if (previewY < 0 || previewY >= projected.Length) continue;
+                if (isPreview)
+                    projected[previewY][previewX] = -1;
+                else
+                    projected[previewY][previewX] = tetromino.Shape[y][x];
             }
         }
-
-        Tetromino dropPreviewTetromino = new Tetromino(handlingTetromino);
-        while (dropPreviewTetromino.TryMove(board, Vector2Int.down)) { }
-
-        for (int y = 0; y < dropPreviewTetromino.Shape.GetLength(0); y++)
-        {
-            for (int x = 0; x < dropPreviewTetromino.Shape.GetLength(1); x++)
-            {
-                int previewX = dropPreviewTetromino.Position.x + x;
-                int previewY = dropPreviewTetromino.Position.y + y;
-                if (previewX < 0 || previewX >= previewBoard[0].Length) continue;
-                if (previewY < 0 || previewY >= previewBoard.Length) continue;
-
-                if (dropPreviewTetromino.Shape[y, x] != 0 && previewBoard[previewY][previewX] == 0)
-                {
-                    previewBoard[previewY][previewX] = -1;
-                }
-            }
-        }
-
-        return previewBoard;
+        return projected;
     }
 
     void OnDestroy()

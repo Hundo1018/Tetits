@@ -82,40 +82,40 @@ public class Tetris : MonoBehaviour, Intents.ITetrisControlsActions
 
     void Awake()
     {
-        ShapeT = new(new int[,] {
-            {0, 1, 0},
-            {1, 1, 1},
-            {0, 0, 0},
+        ShapeT = new(new int[][] {
+            new int[]{0, 0, 0},
+            new int[]{1, 1, 1},
+            new int[]{0, 1, 0},
         }, PrefabT, TShape.T);
-        ShapeI = new(new int[,] {
-            {0, 0, 0, 0},
-            {1, 1, 1, 1},
-            {0, 0, 0, 0},
-            {0, 0, 0, 0},
+        ShapeI = new(new int[][] {
+            new int[]{0, 0, 0, 0},
+            new int[]{0, 0, 0, 0},
+            new int[]{1, 1, 1, 1},
+            new int[]{0, 0, 0, 0},
         }, PrefabI, TShape.I);
-        ShapeO = new(new int[,] {
-            {1, 1},
-            {1, 1},
+        ShapeO = new(new int[][] {
+            new int[]{1, 1},
+            new int[]{1, 1},
         }, PrefabO, TShape.O);
-        ShapeL = new(new int[,] {
-            {0, 0, 0},
-            {1, 1, 1},
-            {1, 0, 0},
+        ShapeL = new(new int[][] {
+           new int[]{0, 0, 0},
+           new int[]{1, 1, 1},
+           new int[]{0, 0, 1},
         }, PrefabL, TShape.L);
-        ShapeJ = new(new int[,] {
-            {0, 0, 0},
-            {1, 1, 1},
-            {0, 0, 1},
+        ShapeJ = new(new int[][] {
+            new int[]{0, 0, 0},
+            new int[]{1, 1, 1},
+            new int[]{1, 0, 0},
         }, PrefabJ, TShape.J);
-        ShapeS = new(new int[,] {
-            {0, 0, 0},
-            {0, 1, 1},
-            {1, 1, 0},
+        ShapeS = new(new int[][] {
+            new int[]{1, 1, 0},
+            new int[]{0, 1, 1},
+            new int[]{0, 0, 0},
         }, PrefabS, TShape.S);
-        ShapeZ = new(new int[,] {
-            {0, 0, 0},
-            {1, 1, 0},
-            {0, 1, 1},
+        ShapeZ = new(new int[][] {
+           new int[] {0, 1, 1},
+           new int[] {1, 1, 0},
+           new int[] {0, 0, 0},
         }, PrefabZ, TShape.Z);
         _controls = new Intents();
         _controls.TetrisControls.SetCallbacks(this);
@@ -203,13 +203,14 @@ public class Tetris : MonoBehaviour, Intents.ITetrisControlsActions
         if (tetromino.IsLegal(matrix, tetromino.Position))
         {
             //設定數值
-            for (int y = 0; y < tetromino.Shape.GetLength(0); y++)
+            for (int y = 0; y < tetromino.Shape.Length; y++)
             {
-                for (int x = 0; x < tetromino.Shape.GetLength(1); x++)
+                for (int x = 0; x < tetromino.Shape[0].Length; x++)
                 {
-                    if (tetromino.Shape[y, x] != 0)
+                    if (tetromino.Shape[y][x] != 0)
                     {
-                        matrix[tetromino.Position.y + y][tetromino.Position.x + x] = tetromino.Shape[y, x];
+                        matrix[tetromino.Position.y + y][tetromino.Position.x + x] =
+                         tetromino.Shape[y][x];
                     }
                 }
             }
